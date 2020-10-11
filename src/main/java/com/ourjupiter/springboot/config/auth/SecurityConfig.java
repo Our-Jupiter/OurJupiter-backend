@@ -27,15 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/v1/**").hasRole(Role.USER.name())
                     .anyRequest().authenticated()
                 .and()
-                    .csrf().ignoringAntMatchers("/h2-console/**")
-                .and()
-                .headers()
-                .addHeaderWriter(
-                        new XFrameOptionsHeaderWriter(
-                                new WhiteListedAllowFromStrategy(Arrays.asList("localhost"))    // 여기!
-                        )
-                )
-                .and()
                     .logout()
                         .logoutSuccessUrl("/")
                 .and()
