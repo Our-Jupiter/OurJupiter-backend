@@ -14,19 +14,20 @@ var main = {
         });
     },
     save : function () {
-        var data = {
-            title: $('#title').val(),
-            author: $('#author').val(),
-            content: $('#content').val()
-        };
+        var form = new FormData($("#UploadForm")[0]);
+
+        form.append('title',$('#title').val());
+        form.append('content',$('#content').val());
+        form.append('author',$('#author').val());
 
         $.ajax({
             type: 'POST',
+            enctype: 'multipart/form-data',
             url: '/api/v1/posts',
-            dataType: 'json',
-            contentType:'application/json; charset=utf-8',
-            data: JSON.stringify(data)
-        }).done(function() {
+            processData: false,
+            contentType: false,
+            data: form
+        }).done(function(data) {
             alert('글이 등록되었습니다.');
             window.location.href = '/';
         }).fail(function (error) {
@@ -34,19 +35,21 @@ var main = {
         });
     },
     update : function () {
-        var data = {
-            title: $('#title').val(),
-            content: $('#content').val()
-        };
+
+        var form = new FormData($("#FixForm")[0]);
+
+        form.append('title',$('#title').val());
+        form.append('content',$('#content').val());
 
         var id = $('#id').val();
 
         $.ajax({
             type: 'PUT',
+            enctype: 'multipart/form-data',
             url: '/api/v1/posts/'+id,
-            dataType: 'json',
-            contentType:'application/json; charset=utf-8',
-            data: JSON.stringify(data)
+            processData: false,
+            contentType: false,
+            data: form
         }).done(function() {
             alert('글이 수정되었습니다.');
             window.location.href = '/';
