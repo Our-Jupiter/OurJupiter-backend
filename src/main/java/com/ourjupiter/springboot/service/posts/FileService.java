@@ -21,16 +21,6 @@ public class FileService {
         return filesRepository.save(fileDto.toEntity()).getId();
     }
 
-    /*@Transactional
-    public Long update(Long id, FileDto fileDto) {
-        Files files = filesRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
-
-        files.update(fileDto.getTitle(), requestDto.getContent());
-
-        return id;
-    }*/
-
     public void delete (Long id) {
         Files files = filesRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 파일 없습니다. id=" + id));

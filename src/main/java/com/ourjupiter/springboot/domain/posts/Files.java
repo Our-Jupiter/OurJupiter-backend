@@ -34,9 +34,4 @@ public class Files extends BaseTimeEntity {
         this.filename = filename;
         this.filePath = filePath;
     }
-
-    /*public void update(Long id, String origFilename, String filename, String filePath) {
-        this.title = title;
-        this.content = content;
-    }*/
 }

@@ -4,3 +4,4 @@
 /build/
 /src/main/resources/files/
 *.DS_Store
+application.properties

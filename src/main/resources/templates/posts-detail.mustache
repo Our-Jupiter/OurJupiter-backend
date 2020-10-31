@@ -6,16 +6,13 @@
             <div class="hidden" style="display:none">
                 <input type="text" class="form-control" id="id" value="{{post.id}}" readonly>
             </div>
-            <!--<h5 class="card-title" id="postId">{{post.id}}</h5>-->
             <h5 class="card-title">{{post.title}}</h5>
             <h5 class="card-title">{{post.author}}</h5>
             <p class="card-text"><small class="text-muted">{{post.modifiedDate}}</small></p>
             <p class="card-text">{{post.content}}</p>
             <div class = 'bigPictureWrapper'>
                 <div class = 'bigPicture'>
-                    <!--<a class="btn btn-info" role="button" href="/api/v1/posts/file/{{post.fileId}}"></a>-->
                     <img width="50%" height="50%" src="/api/v1/posts/file/{{post.fileId}}">
-                    <!--<img src="{{file.filePath}}/">-->
                 </div>
             </div>
         </div>
@@ -31,12 +28,6 @@
         <div class="col-auto">
             <button type="button" class="btn btn-danger" id="btn-delete">삭제</button>
         </div>
-        <!--<div class="col-auto">
-            <form id="delete-form" th:action="@{'/post/' + ${post.id}}" method="post">
-                <input type="hidden" name="_method" value="delete"/>
-                <button id="delete-btn" type="submit" class="btn btn-danger">삭제</button>
-            </form>
-        </div>-->
     </div>
 </div>
 
