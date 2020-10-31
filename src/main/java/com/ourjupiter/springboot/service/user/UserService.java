@@ -3,10 +3,7 @@ package com.ourjupiter.springboot.service.user;
 import com.ourjupiter.springboot.domain.user.User;
 import com.ourjupiter.springboot.domain.user.UserRepository;
 import com.ourjupiter.springboot.web.dto.*;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -79,6 +76,8 @@ public class UserService {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new UnauthorizedException("만료된 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            throw new UnauthorizedException("올바르지 않은 형식의 토큰입니다.");
         }
     }
 }
