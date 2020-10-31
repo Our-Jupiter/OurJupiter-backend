@@ -46,7 +46,7 @@ public class UserService {
         String token = createToken(findUser);
         findUser.setToken(token);
 
-        return createToken(findUser);
+        return token;
     }
 
     public String createToken(User user){
@@ -59,7 +59,8 @@ public class UserService {
         Date now = new Date();
         now.setTime(now.getTime() + expiredTime);
         payloads.put("exp", now);
-        payloads.put("data", user.getEmail());
+        payloads.put("email", user.getEmail());
+        payloads.put("name", user.getName());
 
         String jwt = Jwts.builder()
                 .setHeader(headers)

@@ -24,13 +24,13 @@ public class UserController {
     @PostMapping("/join")
     public String join(@RequestBody JoinRequestDto requestDto) {
 
-        userService.join(requestDto);
-        return "회원가입 성공";
+        return userService.join(requestDto);
     }
 
     @CrossOrigin("*")
-    @PostMapping("/me")
-    public Claims me(@RequestBody String token) {
+    @GetMapping("/me")
+    public Claims me(@RequestHeader("x-access-token") String token) {
+
         return userService.decodeToken(token);
     }
 }
