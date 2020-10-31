@@ -4,7 +4,7 @@
 
 <div class="col-md-12">
     <div class="col-md-4">
-        <form>
+        <form id="FixForm" enctype=”multipart/form-data”>
             <div class="form-group">
                 <label for="title">글 번호</label>
                 <input type="text" class="form-control" id="id" value="{{post.id}}" readonly>
@@ -20,6 +20,18 @@
             <div class="form-group">
                 <label for="content"> 내용 </label>
                 <textarea class="form-control" id="content">{{post.content}}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="inputFile">첨부 파일</label>
+                <div class="custom-file" id="inputFile">
+                    <input name="file" type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">파일을 선택해 주세요.</label>
+                </div>
+            </div>
+            <div class = 'bigPictureWrapper'>
+                <div class = 'bigPicture'>
+                    <img width="50%" height="50%" src="/api/v1/posts/file/{{post.fileId}}">
+                </div>
             </div>
         </form>
         <a href="/" role="button" class="btn btn-secondary">취소</a>

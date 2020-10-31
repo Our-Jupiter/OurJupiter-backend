@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.posts;
 
+import com.ourjupiter.springboot.web.dto.PostsUpdateRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,15 +27,20 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
+    @Column
+    private Long fileId;
+
 
     @Builder
-    public Posts(String title, String content, String author) {
+    public Posts(String title, String content, String author, Long fileId) {
         this.title = title;
         this.content = content;
         this.author = author;
+        this.fileId = fileId;
     }
-    public void update(String title, String content) {
+    public void update(String title, String content, Long fileId) {
         this.title = title;
         this.content = content;
+        this.fileId = fileId;
     }
 }
