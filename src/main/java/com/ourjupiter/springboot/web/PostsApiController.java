@@ -69,7 +69,6 @@ public class PostsApiController {
         Long oldFileId = oldResponse.getFileId();
         FileDto oldFileDto = fileService.getFile(oldFileId);//원래 있던 파일 정보
         String origFilename = files.getOriginalFilename();//새로운 파일 이름
-        System.out.println(origFilename);
 
         if (!origFilename.equals("")) {
             File deleteFile = new File(oldFileDto.getFilePath());
@@ -103,7 +102,6 @@ public class PostsApiController {
 
             Long fileId = fileService.saveFile(fileDto);
             requestDto.setFileId(fileId);
-            System.out.println(fileId);
         }
         else {
             requestDto.setFileId(oldFileId);
@@ -115,7 +113,7 @@ public class PostsApiController {
 
     @DeleteMapping("/api/v1/posts/{id}")
     public String delete(@PathVariable Long id) {
-        System.out.println(id);
+
         PostsResponseDto Response = postsService.findById(id);
         Long fileId = Response.getFileId();
         FileDto FileDto = fileService.getFile(fileId);

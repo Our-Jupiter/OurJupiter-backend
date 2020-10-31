@@ -35,8 +35,6 @@ public class IndexController {
         model.addAttribute("post", dto);
         model.addAttribute("file",fileDto);
 
-        System.out.println(fileDto);
-
         return "posts-detail";
     }
     @GetMapping("/posts/update/{id}")

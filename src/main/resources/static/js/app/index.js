@@ -20,10 +20,6 @@ var main = {
         form.append('content',$('#content').val());
         form.append('author',$('#author').val());
 
-        for (let value of form.values()) {
-            console.log(value);
-        }
-
         $.ajax({
             type: 'POST',
             enctype: 'multipart/form-data',
@@ -45,10 +41,6 @@ var main = {
         form.append('title',$('#title').val());
         form.append('content',$('#content').val());
 
-        for (let value of form.values()) {
-            console.log(value);
-        }
-
         var id = $('#id').val();
 
         $.ajax({
@@ -67,7 +59,6 @@ var main = {
     },
     delete : function () {
         var id = $('#id').val();
-        console.log(id);
 
         $.ajax({
             type: 'DELETE',
