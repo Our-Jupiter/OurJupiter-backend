@@ -19,22 +19,26 @@ public class GroupController {
 
     @CrossOrigin("*")
     @PostMapping("/group")
-    public String createGroup(@RequestBody GroupCreateRequestDto requestDto) {
+    public String createGroup(@RequestHeader("x-access-token") String token,
+                              @RequestBody GroupCreateRequestDto requestDto) {
 
-        return groupService.createGroup(requestDto);
+        return groupService.createGroup(token, requestDto);
     }
 
     @CrossOrigin("*")
     @PutMapping("/group/{id}")
-    public String update(@PathVariable Long id, @RequestBody GroupUpdateRequestDto requestDto) {
+    public String update(@PathVariable Long id,
+                         @RequestHeader("x-access-token") String token,
+                         @RequestBody GroupUpdateRequestDto requestDto) {
 
-        return groupService.updateGroup(id, requestDto);
+        return groupService.updateGroup(id, token, requestDto);
     }
 
     @CrossOrigin("*")
     @DeleteMapping("/group/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id,
+                         @RequestHeader("x-access-token") String token) {
 
-        return groupService.deleteGroup(id);
+        return groupService.deleteGroup(id, token);
     }
 }

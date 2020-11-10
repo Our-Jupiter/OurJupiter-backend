@@ -8,11 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupCreateRequestDto {
     private String name;
-    private String token;
 
     @Builder
-    public GroupCreateRequestDto(String name, String token) {
+    public GroupCreateRequestDto(String name) {
         this.name = name;
-        this.token  = token;
     }
 }
