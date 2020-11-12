@@ -2,6 +2,7 @@ package com.ourjupiter.springboot.service.group;
 
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.group.GroupRepository;
+import com.ourjupiter.springboot.domain.user.User;
 import com.ourjupiter.springboot.domain.user.UserRepository;
 import com.ourjupiter.springboot.web.dto.GroupCreateRequestDto;
 import com.ourjupiter.springboot.web.dto.GroupUpdateRequestDto;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class GroupService {
@@ -17,16 +21,13 @@ public class GroupService {
     private final UserRepository userRepository;
 
     @Transactional
-    public String getGroup(String token){
+    public List<Long> getGroup(String token){
+        User user = userRepository.findByToken(token).get();
 
-//        Long ownerId = userRepository.findByToken(groupCreateRequest.getToken()).get().getId();
-//        Group newGroup = Group.builder()
-//                .name(groupCreateRequest.getName())
-//                .ownerId(ownerId)
-//                .build();
-//
-//        groupRepository.save(newGroup);
-        return "그룹 불러오기 성공";
+        List<Long> id = new ArrayList<Long> ();
+        user.getGroup().forEach(g -> id.add(g.getId()));
+
+        return id;
     }
 
     @Transactional
@@ -39,6 +40,9 @@ public class GroupService {
                 .build();
 
         groupRepository.save(newGroup);
+
+        userRepository.findByToken(token).get().getGroup().add(newGroup);
+
         return "그룹 생성 성공";
     }
 
@@ -68,7 +72,10 @@ public class GroupService {
             throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
         }
 
+        group.getUser().forEach(u -> u.getGroup().remove(group));
+        userRepository.saveAll(group.getUser());
+
         groupRepository.delete(group);
-        return "그룹 생성 성공";
+        return "그룹 삭제 성공";
     }
 }

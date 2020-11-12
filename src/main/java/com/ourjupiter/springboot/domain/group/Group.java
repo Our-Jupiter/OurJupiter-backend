@@ -27,7 +27,7 @@ public class Group {
     @Column(nullable = false)
     private Long ownerId;
 
-    @ManyToMany(mappedBy = "group")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "group")
     private List<User> user = new ArrayList<User>();
 
     @Builder

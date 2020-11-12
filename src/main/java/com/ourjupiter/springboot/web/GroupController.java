@@ -5,17 +5,19 @@ import com.ourjupiter.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class GroupController {
     private final GroupService groupService;
 
-//    @CrossOrigin("*")
-//    @GetMapping("/group")
-//    public String getGroup(@RequestHeader("x-access-token") String token) {
-//
-//        return groupService.getGroup(token);
-//    }
+    @CrossOrigin("*")
+    @GetMapping("/group")
+    public List<Long> getGroup(@RequestHeader("x-access-token") String token) {
+
+        return groupService.getGroup(token);
+    }
 
     @CrossOrigin("*")
     @PostMapping("/group")
