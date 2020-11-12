@@ -2,6 +2,7 @@ package com.ourjupiter.springboot.web;
 
 import com.ourjupiter.springboot.service.group.GroupService;
 import com.ourjupiter.springboot.web.dto.*;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class GroupController {
 
     @CrossOrigin("*")
     @GetMapping("/group")
-    public List<Long> getGroup(@RequestHeader("x-access-token") String token) {
+    public List<Pair<Long, String>> getGroup(@RequestHeader("x-access-token") String token) {
 
         return groupService.getGroup(token);
     }

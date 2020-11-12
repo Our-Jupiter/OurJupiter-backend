@@ -7,6 +7,7 @@ import com.ourjupiter.springboot.domain.user.UserRepository;
 import com.ourjupiter.springboot.web.dto.GroupCreateRequestDto;
 import com.ourjupiter.springboot.web.dto.GroupUpdateRequestDto;
 import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +22,13 @@ public class GroupService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<Long> getGroup(String token){
+    public List<Pair<Long, String>> getGroup(String token){
         User user = userRepository.findByToken(token).get();
 
-        List<Long> id = new ArrayList<Long> ();
-        user.getGroup().forEach(g -> id.add(g.getId()));
+        List<Pair<Long, String>> groupList = new ArrayList<Pair<Long, String>> ();
+        user.getGroup().forEach(g -> groupList.add(new Pair<>(g.getId(), g.getName())));
 
-        return id;
+        return groupList;
     }
 
     @Transactional
