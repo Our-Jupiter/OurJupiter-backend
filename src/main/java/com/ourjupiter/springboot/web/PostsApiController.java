@@ -2,11 +2,8 @@ package com.ourjupiter.springboot.web;
 
 import com.ourjupiter.springboot.service.posts.PostsService;
 import com.ourjupiter.springboot.service.posts.FileService;
-import com.ourjupiter.springboot.web.dto.PostsResponseDto;
-import com.ourjupiter.springboot.web.dto.PostsSaveRequestDto;
-import com.ourjupiter.springboot.web.dto.FileDto;
+import com.ourjupiter.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
-import com.ourjupiter.springboot.web.dto.PostsUpdateRequestDto;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -29,31 +27,35 @@ public class PostsApiController {
     private final PostsService postsService;
     private final FileService fileService;
 
-    @PostMapping("/api/v1/posts")
+    @CrossOrigin("*")
+    @PostMapping("/board")
     public String save(@RequestParam("file") MultipartFile files, PostsSaveRequestDto requestDto) {
         try {
             String origFilename = files.getOriginalFilename();
-            UUID uuid = UUID.randomUUID();
-            String filename = uuid + origFilename;
-            String savePath = System.getProperty("user.dir") + "/src/main/resources/files";
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch (Exception e) {
-                    e.getStackTrace();
+            if (origFilename.length()!=0) {
+                UUID uuid = UUID.randomUUID();
+                String filename = uuid + origFilename;
+                String savePath = System.getProperty("user.dir") + "/src/main/resources/files";
+                if (!new File(savePath).exists()) {
+                    try {
+                        new File(savePath).mkdir();
+                    } catch (Exception e) {
+                        e.getStackTrace();
+                    }
                 }
+                String filePath = savePath + "/" + filename;
+
+                files.transferTo(new File(filePath));
+
+                FileDto fileDto = new FileDto();
+                fileDto.setOrigFilename(origFilename);
+                fileDto.setFilename(filename);
+                fileDto.setFilePath(filePath);
+
+                Long fileId = fileService.saveFile(fileDto);
+                requestDto.setFileId(fileId);
             }
-            String filePath = savePath + "/" + filename;
 
-            files.transferTo(new File(filePath));
-
-            FileDto fileDto = new FileDto();
-            fileDto.setOrigFilename(origFilename);
-            fileDto.setFilename(filename);
-            fileDto.setFilePath(filePath);
-
-            Long fileId = fileService.saveFile(fileDto);
-            requestDto.setFileId(fileId);
             postsService.save(requestDto);
 
 
@@ -63,7 +65,8 @@ public class PostsApiController {
         return "board/index";
     }
 
-    @PutMapping("/api/v1/posts/{id}")
+    @CrossOrigin("*")
+    @PutMapping("/board/{id}")
     public String update(@PathVariable Long id, @RequestParam("file") MultipartFile files,PostsUpdateRequestDto requestDto) throws IOException {
         PostsResponseDto oldResponse = postsService.findById(id);
         Long oldFileId = oldResponse.getFileId();
@@ -111,7 +114,8 @@ public class PostsApiController {
         return "board/index";
     }
 
-    @DeleteMapping("/api/v1/posts/{id}")
+    @CrossOrigin("*")
+    @DeleteMapping("/board/{id}")
     public String delete(@PathVariable Long id) {
 
         PostsResponseDto Response = postsService.findById(id);
@@ -130,12 +134,22 @@ public class PostsApiController {
         return "";
     }
 
-    @GetMapping("/api/v1/posts/{id}")
+    @CrossOrigin("*")
+    @GetMapping("/board")
+    public List<PostsListResponseDto> findAllDesc() {
+        return postsService.findAllDesc();
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/board/{id}")
     public PostsResponseDto findById(@PathVariable Long id) {
+        PostsResponseDto dto = postsService.findById(id);
+
         return postsService.findById(id);
     }
 
-    @GetMapping("/api/v1/posts/file/{id}")
+    @CrossOrigin("*")
+    @GetMapping("/board/file/{id}")
     public ResponseEntity<InputStreamResource> fileStream(@PathVariable Long id) throws IOException {
         FileDto fileDto = fileService.getFile(id);
         Path path = Paths.get(fileDto.getFilePath());
