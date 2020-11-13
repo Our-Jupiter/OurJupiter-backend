@@ -57,7 +57,7 @@ public class PostsApiController {
             postsService.save(requestDto);
 
 
-} catch (Exception e) {
+    } catch (Exception e) {
             e.printStackTrace();
         }
         return "board/index";

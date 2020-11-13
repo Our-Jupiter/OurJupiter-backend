@@ -1,10 +1,13 @@
 package com.ourjupiter.springboot.domain.user;
 
+import com.ourjupiter.springboot.domain.group.Group;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -13,6 +16,7 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(length = 500, nullable = false, unique = true)
@@ -25,6 +29,13 @@ public class User {
     private String password;
 
     private String token;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_group",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private List<Group> group = new ArrayList<Group>();
 
     @Builder
     public User(String email, String name, String password, String token) {
