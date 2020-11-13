@@ -28,7 +28,7 @@ public class PostsApiController {
     private final FileService fileService;
 
     @CrossOrigin("*")
-    @PostMapping("/api/v1/posts")
+    @PostMapping("/board")
     public String save(@RequestParam("file") MultipartFile files, PostsSaveRequestDto requestDto) {
         try {
             String origFilename = files.getOriginalFilename();
@@ -66,7 +66,7 @@ public class PostsApiController {
     }
 
     @CrossOrigin("*")
-    @PutMapping("/api/v1/posts/{id}")
+    @PutMapping("/board/{id}")
     public String update(@PathVariable Long id, @RequestParam("file") MultipartFile files,PostsUpdateRequestDto requestDto) throws IOException {
         PostsResponseDto oldResponse = postsService.findById(id);
         Long oldFileId = oldResponse.getFileId();
@@ -115,7 +115,7 @@ public class PostsApiController {
     }
 
     @CrossOrigin("*")
-    @DeleteMapping("/api/v1/posts/{id}")
+    @DeleteMapping("/board/{id}")
     public String delete(@PathVariable Long id) {
 
         PostsResponseDto Response = postsService.findById(id);
@@ -135,13 +135,13 @@ public class PostsApiController {
     }
 
     @CrossOrigin("*")
-    @GetMapping("/api/v1/posts")
+    @GetMapping("/board")
     public List<PostsListResponseDto> findAllDesc() {
         return postsService.findAllDesc();
     }
 
     @CrossOrigin("*")
-    @GetMapping("/api/v1/posts/{id}")
+    @GetMapping("/board/{id}")
     public PostsResponseDto findById(@PathVariable Long id) {
         PostsResponseDto dto = postsService.findById(id);
 
@@ -149,7 +149,7 @@ public class PostsApiController {
     }
 
     @CrossOrigin("*")
-    @GetMapping("/api/v1/posts/file/{id}")
+    @GetMapping("/board/file/{id}")
     public ResponseEntity<InputStreamResource> fileStream(@PathVariable Long id) throws IOException {
         FileDto fileDto = fileService.getFile(id);
         Path path = Paths.get(fileDto.getFilePath());
