@@ -152,16 +152,17 @@ public class PostsApiController {
 
         PostsResponseDto Response = postsService.findById(id);
         Long fileId = Response.getFileId();
-        FileDto FileDto = fileService.getFile(fileId);
-        File deleteFile = new File(FileDto.getFilePath());
-        if(deleteFile.exists()) {
-            deleteFile.delete();
-            fileService.delete(fileId);
-            System.out.println("파일을 삭제하였습니다.");
-        } else {
-            System.out.println("파일이 존재하지 않습니다.");
+        if (fileId != null) {
+            FileDto FileDto = fileService.getFile(fileId);
+            File deleteFile = new File(FileDto.getFilePath());
+            if(deleteFile.exists()) {
+                deleteFile.delete();
+                fileService.delete(fileId);
+                System.out.println("파일을 삭제하였습니다.");
+            } else {
+                System.out.println("파일이 존재하지 않습니다.");
+            }
         }
-
         postsService.delete(id);
         return "";
     }
