@@ -29,8 +29,9 @@ public class PostsApiController {
 
     @CrossOrigin("*")
     @PostMapping("/board")
-    public String save(@RequestParam("file") MultipartFile files, PostsSaveRequestDto requestDto) {
+    public String save(@RequestParam("file") MultipartFile files, @RequestParam("groupId") String groupId, PostsSaveRequestDto requestDto) {
         try {
+
             String origFilename = files.getOriginalFilename();
             if (origFilename.length()!=0) {
                 UUID uuid = UUID.randomUUID();
@@ -56,7 +57,7 @@ public class PostsApiController {
                 requestDto.setFileId(fileId);
             }
 
-            postsService.save(requestDto);
+            postsService.save(Long.parseLong(groupId), requestDto);
 
 
     } catch (Exception e) {
@@ -70,44 +71,75 @@ public class PostsApiController {
     public String update(@PathVariable Long id, @RequestParam("file") MultipartFile files,PostsUpdateRequestDto requestDto) throws IOException {
         PostsResponseDto oldResponse = postsService.findById(id);
         Long oldFileId = oldResponse.getFileId();
-        FileDto oldFileDto = fileService.getFile(oldFileId);//원래 있던 파일 정보
-        String origFilename = files.getOriginalFilename();//새로운 파일 이름
 
-        if (!origFilename.equals("")) {
-            File deleteFile = new File(oldFileDto.getFilePath());
-            if(deleteFile.exists()) {
-                // 파일을 삭제합니다.
-                deleteFile.delete();
-                fileService.delete(oldFileId);
-                System.out.println("파일을 삭제하였습니다.");
-            } else {
-                System.out.println("파일이 존재하지 않습니다.");
-            }
+        if (oldFileId != null) { //원래 파일 있었을 때
+            FileDto oldFileDto = fileService.getFile(oldFileId);//원래 있던 파일 정보
 
-            UUID uuid = UUID.randomUUID();
-            String filename = uuid + origFilename;
-            String savePath = System.getProperty("user.dir") + "/src/main/resources/files";
-            if (!new File(savePath).exists()) {
-                try {
-                    new File(savePath).mkdir();
-                } catch (Exception e) {
-                    e.getStackTrace();
+            String origFilename = files.getOriginalFilename();//새로운 파일 이름
+
+            if (!origFilename.equals("")) {
+                File deleteFile = new File(oldFileDto.getFilePath());
+                if (deleteFile.exists()) {
+                    // 파일을 삭제합니다.
+                    deleteFile.delete();
+                    fileService.delete(oldFileId);
+                    System.out.println("파일을 삭제하였습니다.");
+                } else {
+                    System.out.println("파일이 존재하지 않습니다.");
                 }
+
+                UUID uuid = UUID.randomUUID();
+                String filename = uuid + origFilename;
+                String savePath = System.getProperty("user.dir") + "/src/main/resources/files";
+                if (!new File(savePath).exists()) {
+                    try {
+                        new File(savePath).mkdir();
+                    } catch (Exception e) {
+                        e.getStackTrace();
+                    }
+                }
+                String filePath = savePath + "/" + filename;
+
+                files.transferTo(new File(filePath));
+
+                FileDto fileDto = new FileDto();
+                fileDto.setOrigFilename(origFilename);
+                fileDto.setFilename(filename);
+                fileDto.setFilePath(filePath);
+
+                Long fileId = fileService.saveFile(fileDto);
+                requestDto.setFileId(fileId);
+            } else {
+                requestDto.setFileId(oldFileId);
             }
-            String filePath = savePath + "/" + filename;
-
-            files.transferTo(new File(filePath));
-
-            FileDto fileDto = new FileDto();
-            fileDto.setOrigFilename(origFilename);
-            fileDto.setFilename(filename);
-            fileDto.setFilePath(filePath);
-
-            Long fileId = fileService.saveFile(fileDto);
-            requestDto.setFileId(fileId);
         }
-        else {
-            requestDto.setFileId(oldFileId);
+        else { //원래 파일 없었을 때
+            String origFilename = files.getOriginalFilename();//새로운 파일 이름
+
+            if (origFilename.length()!=0) {
+
+                UUID uuid = UUID.randomUUID();
+                String filename = uuid + origFilename;
+                String savePath = System.getProperty("user.dir") + "/src/main/resources/files";
+                if (!new File(savePath).exists()) {
+                    try {
+                        new File(savePath).mkdir();
+                    } catch (Exception e) {
+                        e.getStackTrace();
+                    }
+                }
+                String filePath = savePath + "/" + filename;
+
+                files.transferTo(new File(filePath));
+
+                FileDto fileDto = new FileDto();
+                fileDto.setOrigFilename(origFilename);
+                fileDto.setFilename(filename);
+                fileDto.setFilePath(filePath);
+
+                Long fileId = fileService.saveFile(fileDto);
+                requestDto.setFileId(fileId);
+            }
         }
         postsService.update(id,requestDto);
 
@@ -136,8 +168,8 @@ public class PostsApiController {
 
     @CrossOrigin("*")
     @GetMapping("/board")
-    public List<PostsListResponseDto> findAllDesc() {
-        return postsService.findAllDesc();
+    public List<PostsListResponseDto> findAllByGroupId(@RequestParam("groupId") String groupId) {
+        return postsService.findAllByGroupId(Long.parseLong(groupId));
     }
 
     @CrossOrigin("*")

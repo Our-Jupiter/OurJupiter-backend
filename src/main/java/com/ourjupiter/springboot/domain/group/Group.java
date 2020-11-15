@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.group;
 
+import com.ourjupiter.springboot.domain.posts.Posts;
 import com.ourjupiter.springboot.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class Group {
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "group")
     private List<User> user = new ArrayList<User>();
+
+    @OneToMany(mappedBy = "group")
+    private List<Posts> posts = new ArrayList<Posts>();
 
     @Builder
     public Group(String name, Long ownerId) {

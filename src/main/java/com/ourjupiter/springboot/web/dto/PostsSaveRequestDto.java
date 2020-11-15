@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.web.dto;
 
+import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.posts.Posts;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,13 +15,15 @@ public class PostsSaveRequestDto {
     private String content;
     private String author;
     private Long fileId;
+    private Group group;
 
     @Builder
-    public PostsSaveRequestDto(String title, String content, String author, Long fileId) {
+    public PostsSaveRequestDto(String title, String content, String author, Long fileId, Group group) {
         this.title = title;
         this.content = content;
         this.author = author;
         this.fileId = fileId;
+        this.group = group;
 
     }
 
@@ -30,6 +33,7 @@ public class PostsSaveRequestDto {
                 .content(content)
                 .author(author)
                 .fileId(fileId)
+                .group(group)
                 .build();
     }
 

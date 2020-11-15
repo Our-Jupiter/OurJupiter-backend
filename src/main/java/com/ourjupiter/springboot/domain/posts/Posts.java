@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.posts;
 
+import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.web.dto.PostsUpdateRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,8 +16,10 @@ import javax.persistence.*;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Posts extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
     @Column(length = 500, nullable = false)
@@ -30,13 +33,17 @@ public class Posts extends BaseTimeEntity {
     @Column
     private Long fileId;
 
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @Builder
-    public Posts(String title, String content, String author, Long fileId) {
+    public Posts(String title, String content, String author, Long fileId, Group group) {
         this.title = title;
         this.content = content;
         this.author = author;
         this.fileId = fileId;
+        this.group = group;
     }
     public void update(String title, String content, Long fileId) {
         this.title = title;
