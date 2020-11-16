@@ -37,4 +37,5 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 
 spring.main.allow-bean-definition-overriding=true
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 ```
