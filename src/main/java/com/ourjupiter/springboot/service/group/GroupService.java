@@ -2,11 +2,10 @@ package com.ourjupiter.springboot.service.group;
 
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.group.GroupRepository;
+import com.ourjupiter.springboot.domain.posts.Posts;
 import com.ourjupiter.springboot.domain.user.User;
 import com.ourjupiter.springboot.domain.user.UserRepository;
-import com.ourjupiter.springboot.web.dto.GroupCreateRequestDto;
-import com.ourjupiter.springboot.web.dto.GroupUpdateRequestDto;
-import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import com.ourjupiter.springboot.web.dto.*;
 import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +30,14 @@ public class GroupService {
         return groupList;
     }
 
+    @Transactional
+    public String findById(Long id, String token) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + id));
+
+        String ownerEmail = userRepository.findById(group.getOwnerId()).get().getEmail();
+        return ownerEmail;
+    }
     @Transactional
     public String createGroup(String token, GroupCreateRequestDto groupCreateRequest){
 

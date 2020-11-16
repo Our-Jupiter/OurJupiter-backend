@@ -30,6 +30,8 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
+    private String authorEmail;
+
     @Column
     private Long fileId;
 
@@ -38,10 +40,11 @@ public class Posts extends BaseTimeEntity {
     private Group group;
 
     @Builder
-    public Posts(String title, String content, String author, Long fileId, Group group) {
+    public Posts(String title, String content, String author, String authorEmail, Long fileId, Group group) {
         this.title = title;
         this.content = content;
         this.author = author;
+        this.authorEmail = authorEmail;
         this.fileId = fileId;
         this.group = group;
     }

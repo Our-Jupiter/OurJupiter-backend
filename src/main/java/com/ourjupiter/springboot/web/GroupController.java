@@ -21,6 +21,13 @@ public class GroupController {
     }
 
     @CrossOrigin("*")
+    @GetMapping("/group/{id}")
+    public String findById(@PathVariable Long id, @RequestHeader("x-access-token") String token) {
+
+        return groupService.findById(id, token);
+    }
+
+    @CrossOrigin("*")
     @PostMapping("/group")
     public String createGroup(@RequestHeader("x-access-token") String token,
                               @RequestBody GroupCreateRequestDto requestDto) {
