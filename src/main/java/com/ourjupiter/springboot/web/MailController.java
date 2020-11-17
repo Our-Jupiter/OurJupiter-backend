@@ -15,10 +15,10 @@ public class MailController {
 
     @CrossOrigin("*")
     @PostMapping("/mail")
-    public String  execMail(@RequestBody MailDto mailDto) throws UnsupportedEncodingException, MessagingException {
+    public String execMail(@RequestBody MailDto mailDto) throws UnsupportedEncodingException, MessagingException {
 
-        mailService.mailSend(mailDto);
+        mailService.sendMail(mailDto);
 
-        return "";
+        return "Mail send success";
     }
 }

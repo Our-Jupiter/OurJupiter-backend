@@ -1,7 +1,7 @@
 package com.ourjupiter.springboot.domain.group;
 
 import com.ourjupiter.springboot.domain.posts.Posts;
-import com.ourjupiter.springboot.domain.user.User;
+import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +28,12 @@ public class Group {
     @Column(nullable = false)
     private Long ownerId;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "group")
-    private List<User> user = new ArrayList<User>();
+    @OneToMany(
+            mappedBy = "group",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserGroup> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
     private List<Posts> posts = new ArrayList<Posts>();

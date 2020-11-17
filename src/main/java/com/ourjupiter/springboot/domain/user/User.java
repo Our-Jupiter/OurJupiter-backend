@@ -1,6 +1,6 @@
 package com.ourjupiter.springboot.domain.user;
 
-import com.ourjupiter.springboot.domain.group.Group;
+import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,12 +30,13 @@ public class User {
 
     private String token;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_group",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
-    private List<Group> group = new ArrayList<Group>();
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserGroup> groups = new ArrayList<>();
+
 
     @Builder
     public User(String email, String name, String password, String token) {

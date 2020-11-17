@@ -22,9 +22,9 @@ public class GroupController {
 
     @CrossOrigin("*")
     @GetMapping("/group/{id}")
-    public String findById(@PathVariable Long id, @RequestHeader("x-access-token") String token) {
+    public String getOwnerEmail(@PathVariable Long id) {
 
-        return groupService.findById(id, token);
+        return groupService.getOwnerEmail(id);
     }
 
     @CrossOrigin("*")
