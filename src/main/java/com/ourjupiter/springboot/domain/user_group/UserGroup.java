@@ -40,4 +40,8 @@ public class UserGroup {
         this.joined = joined;
         this.id = new UserGroupPK(user.getId(), group.getId());
     }
+
+    public void update(Integer joined) {
+        this.joined = joined;
+    }
 }

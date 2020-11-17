@@ -18,7 +18,14 @@ public class MailController {
     public String execMail(@RequestBody MailDto mailDto) throws UnsupportedEncodingException, MessagingException {
 
         mailService.sendMail(mailDto);
-
         return "Mail send success";
+    }
+
+    @CrossOrigin("*")
+    @PostMapping("/invite")
+    public String invite(@RequestBody InviteRequestDto inviteRequestDto) {
+
+        mailService.inviteGroup(inviteRequestDto);
+        return "그룹 초대 성공";
     }
 }

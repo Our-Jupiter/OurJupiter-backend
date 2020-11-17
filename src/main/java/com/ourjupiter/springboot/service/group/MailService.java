@@ -45,7 +45,8 @@ public class MailService {
         mail.setTo(mailDto.getEmail());
         mail.setSubject("Ourjupiter : "+groupName+"그룹 초대 메일입니다");
         mail.setText(new StringBuffer().append("<h1>당신을 "+groupName+" 그룹에 초대합니다!</h1>")
-                .append("<h3><p>하단의 링크를 클릭하면 "+groupName+" 그룹 가입화면으로 이동합니다.</p></h3>")
+                .append("<h3><p>하단의 링크를 클릭하면 "+groupName+" 그룹 가입화면으로 이동합니다.</p><br />" +
+                        "로그인이 되어 있지 않다면 로그인 후 재접속 바랍니다.</h3>")
                 .append("<h2><a href=\"http://localhost:8081/#/invite/"
                         + userId + "/" + groupId + "\">그룹 가입하러 가기</a></h2>")
                 .toString()
@@ -58,5 +59,17 @@ public class MailService {
                 .joined(0)  // invited
                 .build();
         userGroupRepository.save(newPair);
+    }
+
+    @Transactional
+    public String inviteGroup(InviteRequestDto inviteRequestDto) {
+        UserGroup userGroup = userGroupRepository.findByIds(inviteRequestDto.getUserId(), inviteRequestDto.getGroupId())
+                .orElseThrow(() -> new UnauthorizedException("초대대상이 아닙니다."));
+        if (userGroup.getJoined() == 1)
+            throw new UnauthorizedException("이미 가입되어있습니다.");
+        if (userGroup.getJoined() == 0) {
+            userGroup.update(1);
+        }
+        return "가입되었습니다.";
     }
 }

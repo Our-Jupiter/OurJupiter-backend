@@ -56,6 +56,7 @@ public class UserService {
         Date now = new Date();
         now.setTime(now.getTime() + expiredTime);
         payloads.put("exp", now);
+        payloads.put("id", user.getId());
         payloads.put("email", user.getEmail());
         payloads.put("name", user.getName());
 

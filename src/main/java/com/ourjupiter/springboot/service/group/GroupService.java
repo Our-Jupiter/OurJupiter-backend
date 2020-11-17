@@ -26,10 +26,10 @@ public class GroupService {
     public List<Pair<Long, String>> getGroup(String token){
         User user = userRepository.findByToken(token).get();
 
-        List <Group> group = groupRepository.findAllByOwnerId(user.getId());
+        List<UserGroup> userGroup = userGroupRepository.findJoinedGroupByUserId(user.getId());
 
         List<Pair<Long, String>> groupList = new ArrayList<Pair<Long, String>> ();
-        group.forEach(g -> groupList.add(new Pair<>(g.getId(), g.getName())));
+        userGroup.forEach(g -> groupList.add(new Pair<>(g.getGroup().getId(), g.getGroup().getName())));
 
         return groupList;
     }
