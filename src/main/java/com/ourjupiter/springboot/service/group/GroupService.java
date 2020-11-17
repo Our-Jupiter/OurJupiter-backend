@@ -58,7 +58,7 @@ public class GroupService {
         UserGroup newPair = UserGroup.builder()
                 .user(user)
                 .group(newGroup)
-                .joined(0)
+                .joined(1)
                 .build();
 
         userGroupRepository.save(newPair);
