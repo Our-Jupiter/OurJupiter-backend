@@ -10,13 +10,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MailDto {
     private String email;
+    private Long groupId;
     private String groupName;
-    private String groupId;
 
     @Builder
-    public MailDto(String groupId, String email, String groupName) {
+    public MailDto(String email, Long groupId, String groupName) {
         this.email = email;
-        this.groupName = groupName;
         this.groupId = groupId;
+        this.groupName = groupName;
     }
 }

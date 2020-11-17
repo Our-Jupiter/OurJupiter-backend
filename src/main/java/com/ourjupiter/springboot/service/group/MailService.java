@@ -1,5 +1,11 @@
 package com.ourjupiter.springboot.service.group;
 
+import com.ourjupiter.springboot.domain.group.Group;
+import com.ourjupiter.springboot.domain.group.GroupRepository;
+import com.ourjupiter.springboot.domain.user.User;
+import com.ourjupiter.springboot.domain.user.UserRepository;
+import com.ourjupiter.springboot.domain.user_group.UserGroup;
+import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import com.ourjupiter.springboot.web.dto.*;
 import com.ourjupiter.springboot.web.util.*;
@@ -20,27 +26,37 @@ public class MailService {
     @Autowired
     private JavaMailSender javaMailSender;
     private static final String FROM_ADDRESS = "OurJupiter";
+    private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Transactional
     public void sendMail(MailDto mailDto) throws MessagingException, UnsupportedEncodingException {
+        User user = userRepository.findByEmail(mailDto.getEmail())
+                .orElseThrow(() -> new UnauthorizedException("가입되어있지 않은 유저입니다 ."));
+        Long userId = user.getId();
 
-        MailDto.builder()
-                .email(mailDto.getEmail())
-                .groupId(mailDto.getGroupId())
-                .groupName(mailDto.getGroupName())
-                .build();
+        Group group = groupRepository.findById(mailDto.getGroupId()).get();
+        Long groupId = group.getId();
+        String groupName = group.getName();
 
         MailHandler mail = new MailHandler(javaMailSender);
         mail.setFrom(MailService.FROM_ADDRESS, "ourjupiter");
         mail.setTo(mailDto.getEmail());
-        mail.setSubject("Ourjupiter : "+mailDto.getGroupName()+"그룹 초대 메일입니다");
-        mail.setText(new StringBuffer().append("<h1>당신을 "+mailDto.getGroupName()+" 그룹에 초대합니다!</h1>")
-                .append("<h3><p>하단의 링크를 클릭하면 "+mailDto.getGroupName()+" 그룹 가입화면으로 이동합니다.</p></h3>")
-                .append("<h2><a href=\"http://localhost:8081/#/home\">그룹 가입하러 가기</a></h2>") //여기에 그룹 가입하는 링크 들어가야 함!
+        mail.setSubject("Ourjupiter : "+groupName+"그룹 초대 메일입니다");
+        mail.setText(new StringBuffer().append("<h1>당신을 "+groupName+" 그룹에 초대합니다!</h1>")
+                .append("<h3><p>하단의 링크를 클릭하면 "+groupName+" 그룹 가입화면으로 이동합니다.</p></h3>")
+                .append("<h2><a href=\"http://localhost:8081/#/invite/"
+                        + userId + "/" + groupId + "\">그룹 가입하러 가기</a></h2>")
                 .toString()
         );
         mail.send();
 
-
+        UserGroup newPair = UserGroup.builder()
+                .user(user)
+                .group(group)
+                .joined(0)  // invited
+                .build();
+        userGroupRepository.save(newPair);
     }
 }
