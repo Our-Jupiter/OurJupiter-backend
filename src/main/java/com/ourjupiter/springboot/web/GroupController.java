@@ -21,6 +21,13 @@ public class GroupController {
     }
 
     @CrossOrigin("*")
+    @GetMapping("/group/{id}")
+    public String getOwnerEmail(@PathVariable Long id) {
+
+        return groupService.getOwnerEmail(id);
+    }
+
+    @CrossOrigin("*")
     @PostMapping("/group")
     public String createGroup(@RequestHeader("x-access-token") String token,
                               @RequestBody GroupCreateRequestDto requestDto) {

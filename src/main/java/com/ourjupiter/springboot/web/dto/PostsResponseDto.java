@@ -11,6 +11,7 @@ public class PostsResponseDto {
     private String title;
     private String content;
     private String author;
+    private String authorEmail;
     private LocalDateTime modifiedDate;
     private Long fileId;
 
@@ -20,6 +21,7 @@ public class PostsResponseDto {
         this.title = entity.getTitle();
         this.content = entity.getContent();
         this.author = entity.getAuthor();
+        this.authorEmail = entity.getAuthorEmail();
         this.modifiedDate = entity.getModifiedDate();
         this.fileId = entity.getFileId();
     }

@@ -4,9 +4,9 @@ import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.group.GroupRepository;
 import com.ourjupiter.springboot.domain.user.User;
 import com.ourjupiter.springboot.domain.user.UserRepository;
-import com.ourjupiter.springboot.web.dto.GroupCreateRequestDto;
-import com.ourjupiter.springboot.web.dto.GroupUpdateRequestDto;
-import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import com.ourjupiter.springboot.domain.user_group.UserGroup;
+import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
+import com.ourjupiter.springboot.web.dto.*;
 import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,21 +20,34 @@ import java.util.List;
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Transactional
     public List<Pair<Long, String>> getGroup(String token){
         User user = userRepository.findByToken(token).get();
 
+        List<UserGroup> userGroup = userGroupRepository.findJoinedGroupByUserId(user.getId());
+
         List<Pair<Long, String>> groupList = new ArrayList<Pair<Long, String>> ();
-        user.getGroup().forEach(g -> groupList.add(new Pair<>(g.getId(), g.getName())));
+        userGroup.forEach(g -> groupList.add(new Pair<>(g.getGroup().getId(), g.getGroup().getName())));
 
         return groupList;
     }
 
     @Transactional
+    public String getOwnerEmail(Long id) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + id));
+
+        String ownerEmail = userRepository.findById(group.getOwnerId()).get().getEmail();
+        return ownerEmail;
+    }
+
+    @Transactional
     public String createGroup(String token, GroupCreateRequestDto groupCreateRequest){
 
-        Long ownerId = userRepository.findByToken(token).get().getId();
+        User user = userRepository.findByToken(token).get();
+        Long ownerId = user.getId();
         Group newGroup = Group.builder()
                 .name(groupCreateRequest.getName())
                 .ownerId(ownerId)
@@ -42,7 +55,13 @@ public class GroupService {
 
         groupRepository.save(newGroup);
 
-        userRepository.findByToken(token).get().getGroup().add(newGroup);
+        UserGroup newPair = UserGroup.builder()
+                .user(user)
+                .group(newGroup)
+                .joined(1)
+                .build();
+
+        userGroupRepository.save(newPair);
 
         return "그룹 생성 성공";
     }
@@ -72,9 +91,6 @@ public class GroupService {
         if(!userId.equals(group.getOwnerId())) {
             throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
         }
-
-        group.getUser().forEach(u -> u.getGroup().remove(group));
-        userRepository.saveAll(group.getUser());
 
         groupRepository.delete(group);
         return "그룹 삭제 성공";
