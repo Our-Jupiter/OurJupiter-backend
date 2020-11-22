@@ -27,13 +27,13 @@ public class Goal {
     @JsonIgnore
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "id")
+    //@JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "id")
     private User user;
 
     @JsonIgnore
     @ManyToOne
     @MapsId("groupId")
-    @JoinColumn(name = "group_id", insertable = false, updatable = false, referencedColumnName = "id")
+    //@JoinColumn(name = "group_id", insertable = false, updatable = false, referencedColumnName = "id")
     private Group group;
 
     @Column(length = 100)
