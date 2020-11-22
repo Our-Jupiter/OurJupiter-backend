@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.group;
 
+import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.posts.Posts;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import lombok.Builder;
@@ -34,6 +35,9 @@ public class Group {
             orphanRemoval = true
     )
     private List<UserGroup> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
+    private List<Goal> goals = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
     private List<Posts> posts = new ArrayList<Posts>();
