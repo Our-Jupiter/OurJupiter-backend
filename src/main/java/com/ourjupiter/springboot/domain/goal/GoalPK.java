@@ -10,6 +10,9 @@ public class GoalPK implements Serializable {
     @Column(name = "start_date")
     private LocalDate startDate;
 
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
     @Column(name = "user_id")
     private Long userId;
 
@@ -18,8 +21,9 @@ public class GoalPK implements Serializable {
 
     private GoalPK() {}
 
-    public GoalPK(LocalDate startDate, Long userId, Long groupId) {
+    public GoalPK(LocalDate startDate, LocalDate endDate, Long userId, Long groupId) {
         this.startDate = startDate;
+        this.endDate = endDate;
         this.userId = userId;
         this.groupId = groupId;
     }
