@@ -15,25 +15,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-//@IdClass(GoalPK.class)
 public class Goal {
     @EmbeddedId
     private GoalPK id;
 
-//    @JsonIgnore
-//    @MapsId("startDate")
-//    private String start_date;
-
     @JsonIgnore
     @ManyToOne
     @MapsId("userId")
-    //@JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "id")
     private User user;
 
     @JsonIgnore
     @ManyToOne
     @MapsId("groupId")
-    //@JoinColumn(name = "group_id", insertable = false, updatable = false, referencedColumnName = "id")
     private Group group;
 
     @Column(length = 100)
@@ -51,10 +44,12 @@ public class Goal {
     @Column
     private Integer penalty_approved_num;
 
+    @Column
+    private Boolean is_expired;
+
     @Builder
-    public Goal(LocalDate start_date, User user, Group group, String goal, String penalty,
-                Boolean success, Boolean penalty_certificate, Integer penalty_approved_num) {
-        //this.start_date = start_date;
+    public Goal(LocalDate start_date, LocalDate end_date, User user, Group group, String goal, String penalty,
+                Boolean success, Boolean penalty_certificate, Integer penalty_approved_num, Boolean is_expired) {
         this.user = user;
         this.group = group;
         this.goal = goal;
@@ -62,7 +57,8 @@ public class Goal {
         this.success = success;
         this.penalty_certificate = penalty_certificate;
         this.penalty_approved_num = penalty_approved_num;
-        this.id = new GoalPK(start_date, user.getId(), group.getId());
+        this.is_expired = is_expired;
+        this.id = new GoalPK(start_date, end_date, user.getId(), group.getId());
     }
 
     public void updateSuccess(Boolean success) {
