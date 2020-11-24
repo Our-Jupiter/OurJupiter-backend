@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.web;
 
+import com.ourjupiter.springboot.domain.posts.FileUse;
 import com.ourjupiter.springboot.service.posts.PostsService;
 import com.ourjupiter.springboot.service.posts.FileService;
 import com.ourjupiter.springboot.web.dto.*;
@@ -52,6 +53,7 @@ public class PostsApiController {
                 fileDto.setOrigFilename(origFilename);
                 fileDto.setFilename(filename);
                 fileDto.setFilePath(filePath);
+                fileDto.setFileUse(FileUse.POSTS);
 
                 Long fileId = fileService.saveFile(fileDto);
                 requestDto.setFileId(fileId);
@@ -106,6 +108,7 @@ public class PostsApiController {
                 fileDto.setOrigFilename(origFilename);
                 fileDto.setFilename(filename);
                 fileDto.setFilePath(filePath);
+                fileDto.setFileUse(FileUse.POSTS);
 
                 Long fileId = fileService.saveFile(fileDto);
                 requestDto.setFileId(fileId);
@@ -136,6 +139,7 @@ public class PostsApiController {
                 fileDto.setOrigFilename(origFilename);
                 fileDto.setFilename(filename);
                 fileDto.setFilePath(filePath);
+                fileDto.setFileUse(FileUse.POSTS);
 
                 Long fileId = fileService.saveFile(fileDto);
                 requestDto.setFileId(fileId);

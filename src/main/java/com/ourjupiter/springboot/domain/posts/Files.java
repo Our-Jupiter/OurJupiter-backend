@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.ourjupiter.springboot.domain.BaseTimeEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -27,11 +24,16 @@ public class Files extends BaseTimeEntity {
     @Column(nullable = false)
     private String filePath;
 
+    @Convert(converter = FileUseConverter.class)
+    @Column(nullable = false)
+    private FileUse useWhere;
+
     @Builder
-    public Files(Long id, String origFilename, String filename, String filePath) {
+    public Files(Long id, String origFilename, String filename, String filePath, FileUse useWhere) {
         this.id = id;
         this.origFilename = origFilename;
         this.filename = filename;
         this.filePath = filePath;
+        this.useWhere = useWhere;
     }
 }

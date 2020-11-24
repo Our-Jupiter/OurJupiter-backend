@@ -37,6 +37,7 @@ public class FileService {
                 .origFilename(file.getOrigFilename())
                 .filename(file.getFilename())
                 .filePath(file.getFilePath())
+                .fileUse(file.getUseWhere())
                 .build();
         return fileDto;
     }
