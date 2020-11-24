@@ -1,6 +1,7 @@
-package com.ourjupiter.springboot.domain.goal;
+package com.ourjupiter.springboot.domain.certificaion;
 
 import lombok.Getter;
+import org.springframework.jndi.JndiLocatorDelegate;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -9,12 +10,13 @@ import java.time.LocalDate;
 
 @Embeddable
 @Getter
-public class GoalPK implements Serializable {
+public class CertificationPK implements Serializable{
+
+    @Column(name = "today_date")
+    private LocalDate todayDate;
+
     @Column(name = "start_date")
     private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
 
     @Column(name = "user_id")
     private Long userId;
@@ -22,13 +24,12 @@ public class GoalPK implements Serializable {
     @Column(name = "group_id")
     private Long groupId;
 
-    private GoalPK() {}
+    private CertificationPK() {}
 
-    public GoalPK(LocalDate startDate, LocalDate endDate, Long userId, Long groupId) {
+    public CertificationPK(LocalDate todayDate, LocalDate startDate, Long userId, Long groupId) {
+        this.todayDate = todayDate;
         this.startDate = startDate;
-        this.endDate = endDate;
         this.userId = userId;
         this.groupId = groupId;
     }
-
 }

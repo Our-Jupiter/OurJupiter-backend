@@ -1,6 +1,7 @@
 package com.ourjupiter.springboot.domain.goal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.user.User;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -46,6 +49,9 @@ public class Goal {
 
     @Column
     private Boolean is_expired;
+
+    @OneToMany(mappedBy = "goal")
+    private List<Certification> certifications = new ArrayList<>();
 
     @Builder
     public Goal(LocalDate start_date, LocalDate end_date, User user, Group group, String goal, String penalty,

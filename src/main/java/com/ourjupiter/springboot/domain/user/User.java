@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.user;
 
+import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import lombok.*;
@@ -40,6 +41,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Goal> goals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Certification> certifications = new ArrayList<>();
 
     @Builder
     public User(String email, String name, String password, String token) {

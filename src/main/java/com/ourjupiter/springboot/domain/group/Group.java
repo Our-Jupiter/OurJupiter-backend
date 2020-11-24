@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.group;
 
+import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.posts.Posts;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
@@ -38,6 +39,9 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     private List<Goal> goals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
+    private List<Certification> certifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
     private List<Posts> posts = new ArrayList<Posts>();
