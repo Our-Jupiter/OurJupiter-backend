@@ -29,10 +29,10 @@ public class Goal {
     @MapsId("groupId")
     private Group group;
 
-    @Column(length = 100)
+    @Column
     private String goal;
 
-    @Column(length = 100)
+    @Column
     private String penalty;
 
     @Column
@@ -60,6 +60,10 @@ public class Goal {
         this.is_expired = is_expired;
         this.id = new GoalPK(start_date, end_date, user.getId(), group.getId());
     }
+
+    public void updateGoal(String goal) { this.goal = goal; }
+
+    public void updatePenalty(String penalty) { this.penalty = penalty; }
 
     public void updateSuccess(Boolean success) {
         this.success = success;
