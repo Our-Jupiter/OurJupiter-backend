@@ -6,6 +6,7 @@ import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class GoalController {
 
     @CrossOrigin("*")
     @GetMapping("/routine/{groupId}")
-    public Integer hasRoutine(@PathVariable Long groupId) {
+    public LocalDate hasRoutine(@PathVariable Long groupId) {
 
         return goalService.hasRoutine(groupId);
     }

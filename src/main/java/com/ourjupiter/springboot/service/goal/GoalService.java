@@ -59,9 +59,10 @@ public class GoalService {
     }
 
     @Transactional
-    public Integer hasRoutine(Long groupId){
+    public LocalDate hasRoutine(Long groupId){
         List<Goal> routines = goalRepository.findActiveRoutine(groupId);
-        return routines.size();
+        if (routines.size() == 0) return null;
+        return routines.get(0).getId().getStartDate();
     }
 
     @Transactional
