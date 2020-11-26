@@ -51,12 +51,9 @@ public class Goal {
     @Column
     private Boolean is_expired;
 
-<<<<<<< HEAD
     @OneToMany(mappedBy = "goal", fetch = FetchType.EAGER)
     private List<Certification> certifications = new ArrayList<>();
 
-=======
->>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
     @Builder
     public Goal(LocalDate start_date, LocalDate end_date, User user, Group group, String goal, String penalty,
                 Boolean success, Boolean penalty_certificate, Integer penalty_approved_num, Boolean is_expired) {
