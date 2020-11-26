@@ -1,11 +1,14 @@
 package com.ourjupiter.springboot.service.goal;
 
+<<<<<<< HEAD
 
 import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.certificaion.CertificationPK;
 import com.ourjupiter.springboot.domain.certificaion.CertificationRepository;
 import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.goal.GoalPK;
+=======
+>>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
 import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.goal.GoalRepository;
 import com.ourjupiter.springboot.domain.group.Group;
@@ -33,8 +36,11 @@ public class GoalService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
+<<<<<<< HEAD
     private final CertificationRepository certificationRepository;
 
+=======
+>>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
 
     @Transactional
     public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto){
@@ -63,6 +69,7 @@ public class GoalService {
                         .is_expired(false)
                         .build()
         ));
+<<<<<<< HEAD
 
         Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
 
@@ -82,6 +89,8 @@ public class GoalService {
                             .goal(findGoal)
                             .build()
             ));*/
+=======
+>>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
         return "루틴 생성 성공";
     }
 
@@ -122,6 +131,7 @@ public class GoalService {
 
         return "목표 패널티 설정 성공";
     }
+<<<<<<< HEAD
 
     @Transactional
     public String deleteGoal(Long groupId, String token){
@@ -138,4 +148,6 @@ public class GoalService {
 
         return "목표 삭제 성공";
     }
+=======
+>>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
 }

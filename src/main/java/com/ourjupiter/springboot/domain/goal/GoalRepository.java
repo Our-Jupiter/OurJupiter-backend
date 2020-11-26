@@ -10,9 +10,12 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findActiveRoutine(Long groupId);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Query("SELECT g FROM Goal g where g.id.groupId = :#{#groupId}")
     List<Goal> findByGroupId(Long groupId);
 
+=======
+>>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
 =======
 >>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
     @Query("SELECT g FROM Goal g where g.id.userId = :#{#userId} and g.id.groupId = :#{#groupId} and g.is_expired = 0")
