@@ -44,9 +44,6 @@ public class Group {
     private List<Goal> goals = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
-    private List<Certification> certifications = new ArrayList<>();
-
-    @OneToMany(mappedBy = "group")
     private List<Posts> posts = new ArrayList<Posts>();
 
     @Builder

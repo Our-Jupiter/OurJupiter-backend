@@ -42,9 +42,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Goal> goals = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Certification> certifications = new ArrayList<>();
-
     @Builder
     public User(String email, String name, String password, String token) {
         this.email = email;
