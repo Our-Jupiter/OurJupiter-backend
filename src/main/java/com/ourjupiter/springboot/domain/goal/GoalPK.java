@@ -1,14 +1,20 @@
 package com.ourjupiter.springboot.domain.goal;
 
+import lombok.Getter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Embeddable
+@Getter
 public class GoalPK implements Serializable {
     @Column(name = "start_date")
     private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Column(name = "user_id")
     private Long userId;
@@ -18,9 +24,11 @@ public class GoalPK implements Serializable {
 
     private GoalPK() {}
 
-    public GoalPK(LocalDate startDate, Long userId, Long groupId) {
+    public GoalPK(LocalDate startDate, LocalDate endDate, Long userId, Long groupId) {
         this.startDate = startDate;
+        this.endDate = endDate;
         this.userId = userId;
         this.groupId = groupId;
     }
+
 }

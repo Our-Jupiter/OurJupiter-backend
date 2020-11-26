@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.domain.user;
 
+import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.goal.Goal;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import lombok.*;

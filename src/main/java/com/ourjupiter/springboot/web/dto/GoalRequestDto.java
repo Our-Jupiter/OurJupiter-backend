@@ -6,14 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GoalCreateRequestDto {
-    private Long groupId;
+public class GoalRequestDto {
     private String goal;
     private String penalty;
 
     @Builder
-    public GoalCreateRequestDto(Long groupId, String goal, String penalty) {
-        this.groupId = groupId;
+    public GoalRequestDto(String goal, String penalty) {
         this.goal = goal;
         this.penalty = penalty;
     }

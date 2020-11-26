@@ -1,5 +1,6 @@
 package com.ourjupiter.springboot.web;
 
+import com.ourjupiter.springboot.service.goal.GoalService;
 import com.ourjupiter.springboot.service.group.GroupService;
 import com.ourjupiter.springboot.web.dto.*;
 import javafx.util.Pair;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 public class GroupController {
     private final GroupService groupService;
+    private final GoalService goalService;
 
     @CrossOrigin("*")
     @GetMapping("/group")

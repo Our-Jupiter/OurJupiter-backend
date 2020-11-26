@@ -1,6 +1,7 @@
 package com.ourjupiter.springboot.domain.goal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.user.User;
 import lombok.Builder;
@@ -10,36 +11,32 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-//@IdClass(GoalPK.class)
 public class Goal {
     @EmbeddedId
+    @Column(name = "goalPK")
     private GoalPK id;
-
-//    @JsonIgnore
-//    @MapsId("startDate")
-//    private String start_date;
 
     @JsonIgnore
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "id")
     private User user;
 
     @JsonIgnore
     @ManyToOne
     @MapsId("groupId")
-    @JoinColumn(name = "group_id", insertable = false, updatable = false, referencedColumnName = "id")
     private Group group;
 
-    @Column(length = 100)
+    @Column
     private String goal;
 
-    @Column(length = 100)
+    @Column
     private String penalty;
 
     @Column
@@ -51,10 +48,15 @@ public class Goal {
     @Column
     private Integer penalty_approved_num;
 
+    @Column
+    private Boolean is_expired;
+
+    @OneToMany(mappedBy = "goal", fetch = FetchType.EAGER)
+    private List<Certification> certifications = new ArrayList<>();
+
     @Builder
-    public Goal(LocalDate start_date, User user, Group group, String goal, String penalty,
-                Boolean success, Boolean penalty_certificate, Integer penalty_approved_num) {
-        //this.start_date = start_date;
+    public Goal(LocalDate start_date, LocalDate end_date, User user, Group group, String goal, String penalty,
+                Boolean success, Boolean penalty_certificate, Integer penalty_approved_num, Boolean is_expired) {
         this.user = user;
         this.group = group;
         this.goal = goal;
@@ -62,8 +64,13 @@ public class Goal {
         this.success = success;
         this.penalty_certificate = penalty_certificate;
         this.penalty_approved_num = penalty_approved_num;
-        this.id = new GoalPK(start_date, user.getId(), group.getId());
+        this.is_expired = is_expired;
+        this.id = new GoalPK(start_date, end_date, user.getId(), group.getId());
     }
+
+    public void updateGoal(String goal) { this.goal = goal; }
+
+    public void updatePenalty(String penalty) { this.penalty = penalty; }
 
     public void updateSuccess(Boolean success) {
         this.success = success;
