@@ -80,4 +80,18 @@ public class GroupService {
         group.update(requestDto.getName());
         return "그룹 수정 성공";
     }
+
+    @Transactional
+    public String deleteGroup(Long id, String token){
+
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + id));
+
+        Long userId = userRepository.findByToken(token).get().getId();
+        if(!userId.equals(group.getOwnerId())) {
+            throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
+        }
+        groupRepository.delete(group);
+        return "그룹 삭제 성공";
+    }
 }

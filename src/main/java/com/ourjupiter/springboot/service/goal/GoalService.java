@@ -1,15 +1,10 @@
 package com.ourjupiter.springboot.service.goal;
 
-<<<<<<< HEAD
-
 import com.ourjupiter.springboot.domain.certificaion.Certification;
 import com.ourjupiter.springboot.domain.certificaion.CertificationPK;
 import com.ourjupiter.springboot.domain.certificaion.CertificationRepository;
 import com.ourjupiter.springboot.domain.goal.Goal;
-import com.ourjupiter.springboot.domain.goal.GoalPK;
-=======
->>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
-import com.ourjupiter.springboot.domain.goal.Goal;
+
 import com.ourjupiter.springboot.domain.goal.GoalRepository;
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.group.GroupRepository;
@@ -36,14 +31,10 @@ public class GoalService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
-<<<<<<< HEAD
     private final CertificationRepository certificationRepository;
 
-=======
->>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
-
     @Transactional
-    public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto){
+    public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto) {
         User user = userRepository.findByToken(token).get();
         Group group = groupRepository.findById(routineCreateRequestDto.getGroupId()).get();
 
@@ -52,10 +43,38 @@ public class GoalService {
         }
 
         LocalDate startDate = routineCreateRequestDto.getStartDate();
+        LocalDate todayDate = startDate;
         LocalDate endDate = startDate.plusDays(14);
 
         List<UserGroup> members = userGroupRepository.findByGroupId(group.getId());
-        members.forEach(m -> goalRepository.save(
+        for (UserGroup element : members) {
+            Goal g = goalRepository.save(
+                    Goal.builder()
+                            .start_date(startDate.plusDays(1))
+                            .end_date(endDate)
+                            .user(userRepository.findById(element.getUser().getId()).get())
+                            .group(group)
+                            .goal("")
+                            .penalty("")
+                            .success(false)
+                            .penalty_certificate(false)
+                            .penalty_approved_num(0)
+                            .is_expired(false)
+                            .build()
+            );
+
+            for (int i = 0; i < 14; i++) {
+                certificationRepository.save(
+                        Certification.builder()
+                                .today_date(todayDate.plusDays(1))
+                                .daily_check(false)
+                                .goal(g)
+                                .build()
+                );
+                todayDate = todayDate.plusDays(1);
+            }
+        }
+        /*members.forEach(m -> goalRepository.save(
                 Goal.builder()
                         .start_date(startDate.plusDays(1))
                         .end_date(endDate)
@@ -68,19 +87,18 @@ public class GoalService {
                         .penalty_approved_num(0)
                         .is_expired(false)
                         .build()
-        ));
-<<<<<<< HEAD
+        ));*/
 
         Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
 
-        certificationRepository.save(
+        /*certificationRepository.save(
                 Certification.builder()
                         .today_date(startDate.plusDays(1))
                         .daily_check(false)
                         .goal(findGoal)
                         .build()
-        );
-        System.out.println("***"+findGoal);
+        );*/
+        System.out.println("***" + findGoal);
 
             /*members.forEach(m -> certificationRepository.save(
                     Certification.builder()
@@ -89,20 +107,18 @@ public class GoalService {
                             .goal(findGoal)
                             .build()
             ));*/
-=======
->>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
         return "루틴 생성 성공";
     }
 
     @Transactional
-    public LocalDate hasRoutine(Long groupId){
+    public LocalDate hasRoutine(Long groupId) {
         List<Goal> routines = goalRepository.findActiveRoutine(groupId);
         if (routines.size() == 0) return null;
         return routines.get(0).getId().getStartDate();
     }
 
     @Transactional
-    public Map<String, String> getGoalPenalty(String token, Long groupId){
+    public Map<String, String> getGoalPenalty(String token, Long groupId) {
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
         Group group = groupRepository.findById(groupId)
@@ -118,7 +134,7 @@ public class GoalService {
     }
 
     @Transactional
-    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId){
+    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId) {
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
         Group group = groupRepository.findById(groupId)
@@ -131,23 +147,25 @@ public class GoalService {
 
         return "목표 패널티 설정 성공";
     }
-<<<<<<< HEAD
 
     @Transactional
-    public String deleteGoal(Long groupId, String token){
+    public String deleteGoal(Long groupId, String token) {
         User user = userRepository.findByToken(token).get();
         Group group = groupRepository.findById(groupId).get();
 
         if (user.getId() != group.getOwnerId()) {
             throw new UnauthorizedException("권한이 없습니다 .");
         }
-        //System.out.println("********");
+
         List<Goal> goals = goalRepository.findByGroupId(groupId);
-        //System.out.println("****"+goals.get(0).getGroup().getId());
-        goals.forEach(g ->goalRepository.delete(g));
+        int count = goals.size();
+        System.out.println("+++"+goals.get(0));
+        goalRepository.delete(goalRepository.findByGroupId(groupId).get(0));
+        /*for (int i = 0; i < count; i++) {
+            goalRepository.deleteInBatch(goals);
+        }*/
+        //goals.forEach(g -> goalRepository.delete(g));
 
         return "목표 삭제 성공";
     }
-=======
->>>>>>> 847f23f7097c54cd167cc8b01e69e2c7db445ed8
 }

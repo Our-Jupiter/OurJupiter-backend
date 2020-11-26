@@ -18,11 +18,13 @@ import java.time.LocalDate;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Certification {
-    @EmbeddedId
-    private CertificationPK id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "certificaion_id")
+    private Long id;
 
     @JsonIgnore
-    @MapsId("goalPK")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "end_date"),
@@ -33,13 +35,16 @@ public class Certification {
     private Goal goal;
 
     @Column
+    private LocalDate today_date;
+
+    @Column
     private Boolean daily_check;
 
     @Builder
-    public Certification(LocalDate today_date, Goal goal, Boolean daily_check) {
+    public Certification(Goal goal, LocalDate today_date, Boolean daily_check) {
         this.goal = goal;
+        this.today_date = today_date;
         this.daily_check = daily_check;
-        this.id = new CertificationPK(today_date, goal.getId());
     }
 
     public void updateDailyCertificate(Boolean daily_check) {

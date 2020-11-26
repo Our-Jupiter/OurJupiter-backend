@@ -51,7 +51,11 @@ public class Goal {
     @Column
     private Boolean is_expired;
 
-    @OneToMany(mappedBy = "goal", fetch = FetchType.EAGER)
+    @OneToMany(
+            mappedBy = "goal",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Certification> certifications = new ArrayList<>();
 
     @Builder

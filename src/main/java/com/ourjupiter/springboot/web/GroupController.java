@@ -51,6 +51,7 @@ public class GroupController {
     public String delete(@PathVariable Long id,
                          @RequestHeader("x-access-token") String token) {
 
+        goalService.deleteGoal(id, token);
         return groupService.deleteGroup(id, token);
     }
 }
