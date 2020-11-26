@@ -1,11 +1,14 @@
 package com.ourjupiter.springboot.domain.goal;
 
+import lombok.Getter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Embeddable
+@Getter
 public class GoalPK implements Serializable {
     @Column(name = "start_date")
     private LocalDate startDate;
