@@ -53,9 +53,8 @@ public class Goal {
 
     @OneToMany(
             mappedBy = "goal",
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            fetch = FetchType.EAGER
+            )
     private List<Certification> certifications = new ArrayList<>();
 
     @Builder

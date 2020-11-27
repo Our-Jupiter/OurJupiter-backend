@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 public class CertificationPK implements Serializable{
 
-    @Column(name = "goalPK")
+    @Column(name = "goal_PK")
     private GoalPK goalPK;
 
     @Column(name = "today_date")
@@ -23,7 +23,6 @@ public class CertificationPK implements Serializable{
 
     public CertificationPK(LocalDate todayDate, GoalPK goalPK) {
         this.todayDate = todayDate;
-        //System.out.println("***"+goalPK);
         this.goalPK = goalPK;
     }
 }

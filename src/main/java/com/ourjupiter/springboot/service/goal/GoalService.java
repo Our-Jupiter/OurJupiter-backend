@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class GoalService {
 
     @Transactional
     public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto) {
+
         User user = userRepository.findByToken(token).get();
         Group group = groupRepository.findById(routineCreateRequestDto.getGroupId()).get();
 
@@ -69,44 +71,12 @@ public class GoalService {
                                 .today_date(todayDate.plusDays(1))
                                 .daily_check(false)
                                 .goal(g)
+                                .fileId(null)
                                 .build()
                 );
                 todayDate = todayDate.plusDays(1);
             }
         }
-        /*members.forEach(m -> goalRepository.save(
-                Goal.builder()
-                        .start_date(startDate.plusDays(1))
-                        .end_date(endDate)
-                        .user(userRepository.findById(m.getUser().getId()).get())
-                        .group(group)
-                        .goal("")
-                        .penalty("")
-                        .success(false)
-                        .penalty_certificate(false)
-                        .penalty_approved_num(0)
-                        .is_expired(false)
-                        .build()
-        ));*/
-
-        Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
-
-        /*certificationRepository.save(
-                Certification.builder()
-                        .today_date(startDate.plusDays(1))
-                        .daily_check(false)
-                        .goal(findGoal)
-                        .build()
-        );*/
-        System.out.println("***" + findGoal);
-
-            /*members.forEach(m -> certificationRepository.save(
-                    Certification.builder()
-                            .today_date(startDate)
-                            .daily_check(false)
-                            .goal(findGoal)
-                            .build()
-            ));*/
         return "루틴 생성 성공";
     }
 
@@ -160,7 +130,7 @@ public class GoalService {
         List<Goal> goals = goalRepository.findByGroupId(groupId);
         int count = goals.size();
         System.out.println("+++"+goals.get(0));
-        goalRepository.delete(goalRepository.findByGroupId(groupId).get(0));
+        //goalRepository.delete(goalRepository.findByIdGroupId(groupId).get());
         /*for (int i = 0; i < count; i++) {
             goalRepository.deleteInBatch(goals);
         }*/

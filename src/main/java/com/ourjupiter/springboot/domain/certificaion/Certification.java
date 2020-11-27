@@ -8,6 +8,8 @@ import com.ourjupiter.springboot.domain.goal.Goal;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -25,29 +27,37 @@ public class Certification {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumns({
-            @JoinColumn(name = "end_date"),
-            @JoinColumn(name = "group_id"),
-            @JoinColumn(name = "start_date"),
-            @JoinColumn(name = "user_id"),
+            @JoinColumn(name = "end_date",updatable = false),
+            @JoinColumn(name = "group_id",updatable = false),
+            @JoinColumn(name = "start_date",updatable = false),
+            @JoinColumn(name = "user_id",updatable = false),
     })
     private Goal goal;
 
-    @Column
-    private LocalDate today_date;
+    @Column(updatable = false)
+    private LocalDate todayDate;
 
     @Column
-    private Boolean daily_check;
+    private Boolean dailyCheck;
+
+    @Column
+    private Long fileId;
 
     @Builder
-    public Certification(Goal goal, LocalDate today_date, Boolean daily_check) {
+    public Certification(Goal goal, LocalDate today_date, Boolean daily_check, Long fileId) {
         this.goal = goal;
-        this.today_date = today_date;
-        this.daily_check = daily_check;
+        this.todayDate = today_date;
+        this.dailyCheck = daily_check;
+        this.fileId = fileId;
     }
 
-    public void updateDailyCertificate(Boolean daily_check) {
-        this.daily_check = daily_check;
+    public void updateFile(Long fileId) {
+        this.fileId = fileId;
+    }
+    public void dailyCheck(Boolean dailyCheck) {
+        this.dailyCheck = dailyCheck;
     }
 }
