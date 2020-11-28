@@ -43,17 +43,16 @@ public class Goal {
     private Boolean success;
 
     @Column
-    private Boolean penalty_certificate;
+    private Boolean penaltyCertificate;
 
     @Column
-    private Integer penalty_approved_num;
+    private Integer penaltyApproved_num;
 
     @Column
-    private Boolean is_expired;
+    private Boolean isExpired;
 
     @OneToMany(
-            mappedBy = "goal",
-            fetch = FetchType.EAGER
+            mappedBy = "goal"
             )
     private List<Certification> certifications = new ArrayList<>();
 
@@ -65,9 +64,9 @@ public class Goal {
         this.goal = goal;
         this.penalty = penalty;
         this.success = success;
-        this.penalty_certificate = penalty_certificate;
-        this.penalty_approved_num = penalty_approved_num;
-        this.is_expired = is_expired;
+        this.penaltyCertificate = penalty_certificate;
+        this.penaltyApproved_num = penalty_approved_num;
+        this.isExpired = is_expired;
         this.id = new GoalPK(start_date, end_date, user.getId(), group.getId());
     }
 
@@ -80,10 +79,10 @@ public class Goal {
     }
 
     public void updateCertificate(Boolean penalty_certificate) {
-        this.penalty_certificate = penalty_certificate;
+        this.penaltyCertificate = penalty_certificate;
     }
 
     public void updateApprovedNum() {
-        this.penalty_approved_num += 1;
+        this.penaltyApproved_num += 1;
     }
 }

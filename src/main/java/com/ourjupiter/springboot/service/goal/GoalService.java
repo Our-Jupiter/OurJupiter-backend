@@ -15,12 +15,16 @@ import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
 import com.ourjupiter.springboot.web.dto.GoalRequestDto;
 import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
 import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +80,7 @@ public class GoalService {
                 );
                 todayDate = todayDate.plusDays(1);
             }
+            todayDate = startDate;
         }
         return "루틴 생성 성공";
     }
@@ -104,6 +109,21 @@ public class GoalService {
     }
 
     @Transactional
+    public List<Pair<String, String>> getGoalList(String token, Long groupId){
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        List<Goal> findGoal = goalRepository.findActiveRoutine(groupId);
+
+        List<Pair<String, String>> goalList = new ArrayList<>();
+        findGoal.forEach(g -> goalList.add(new Pair<>(g.getUser().getName(), g.getGoal())));
+
+        return goalList;
+    }
+
+    @Transactional
     public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId) {
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
@@ -129,7 +149,6 @@ public class GoalService {
 
         List<Goal> goals = goalRepository.findByGroupId(groupId);
         int count = goals.size();
-        System.out.println("+++"+goals.get(0));
         //goalRepository.delete(goalRepository.findByIdGroupId(groupId).get());
         /*for (int i = 0; i < count; i++) {
             goalRepository.deleteInBatch(goals);

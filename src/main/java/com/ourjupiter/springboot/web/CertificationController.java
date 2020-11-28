@@ -8,12 +8,15 @@ import com.ourjupiter.springboot.web.dto.CertificationCreateRequestDto;
 import com.ourjupiter.springboot.web.dto.FileDto;
 import com.ourjupiter.springboot.web.dto.PostsSaveRequestDto;
 import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -56,5 +59,21 @@ public class CertificationController {
             e.printStackTrace();
         }
         return "";
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/certification/{groupId}")
+    public Boolean getGoalPenalty(@RequestHeader("x-access-token") String token,
+                                              @PathVariable Long groupId) {
+
+        return certificationService.getDailyCheck(token, groupId);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/daily/{groupId}")
+    public List<Pair<String, Long>> getDailyCertification(@RequestHeader("x-access-token") String token,
+                                                            @PathVariable Long groupId) {
+
+        return certificationService.getDailyCertification(token, groupId);
     }
 }
