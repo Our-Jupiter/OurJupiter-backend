@@ -7,6 +7,7 @@ import com.ourjupiter.springboot.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -43,6 +45,12 @@ public class Goal {
     private Boolean success;
 
     @Column
+    private Integer successNum;
+
+    @Column
+    private Boolean doFeedback;
+
+    @Column
     private Boolean penaltyCertificate;
 
     @Column
@@ -58,12 +66,15 @@ public class Goal {
 
     @Builder
     public Goal(LocalDate start_date, LocalDate end_date, User user, Group group, String goal, String penalty,
-                Boolean success, Boolean penalty_certificate, Integer penalty_approved_num, Boolean is_expired) {
+                Boolean success, Integer success_num, Boolean do_feedback,
+                Boolean penalty_certificate, Integer penalty_approved_num, Boolean is_expired) {
         this.user = user;
         this.group = group;
         this.goal = goal;
         this.penalty = penalty;
         this.success = success;
+        this.successNum = success_num;
+        this.doFeedback = do_feedback;
         this.penaltyCertificate = penalty_certificate;
         this.penaltyApproved_num = penalty_approved_num;
         this.isExpired = is_expired;
@@ -74,8 +85,12 @@ public class Goal {
 
     public void updatePenalty(String penalty) { this.penalty = penalty; }
 
-    public void updateSuccess(Boolean success) {
-        this.success = success;
+    public void updateSuccessNum() {
+        this.successNum += 1;
+    }
+
+    public void updateDoFeedback() {
+        this.doFeedback = true;
     }
 
     public void updateCertificate(Boolean penalty_certificate) {

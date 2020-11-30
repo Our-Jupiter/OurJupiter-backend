@@ -41,6 +41,15 @@ public class GoalController {
     }
 
     @CrossOrigin("*")
+    @PutMapping("/goal/{groupId}")
+    public String setGoalPenalty(@RequestHeader("x-access-token") String token,
+                                 @RequestBody GoalRequestDto goalRequestDto,
+                                 @PathVariable Long groupId) {
+
+        return goalService.setGoalPenalty(token, goalRequestDto, groupId);
+    }
+
+    @CrossOrigin("*")
     @GetMapping("/goalList/{groupId}")
     public List<Pair<String, String>> getGoalList(@RequestHeader("x-access-token") String token,
                                                 @PathVariable Long groupId) {
@@ -49,11 +58,19 @@ public class GoalController {
     }
 
     @CrossOrigin("*")
-    @PostMapping("/goal/{groupId}")
-    public String setGoalPenalty(@RequestHeader("x-access-token") String token,
-                                 @RequestBody GoalRequestDto goalRequestDto,
+    @PutMapping("/feedback/{groupId}")
+    public String setFeedback(@RequestHeader("x-access-token") String token,
+                                 @RequestBody List<String> feedback,
                                  @PathVariable Long groupId) {
 
-        return goalService.setGoalPenalty(token, goalRequestDto, groupId);
+        return goalService.setFeedback(token, feedback, groupId);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/feedback/{groupId}")
+    public Boolean getDoFeedback(@RequestHeader("x-access-token") String token,
+                                @PathVariable Long groupId) {
+
+        return goalService.getDoFeedback(token, groupId);
     }
 }

@@ -63,6 +63,8 @@ public class GoalService {
                             .goal("")
                             .penalty("")
                             .success(false)
+                            .success_num(0)
+                            .do_feedback(false)
                             .penalty_certificate(false)
                             .penalty_approved_num(0)
                             .is_expired(false)
@@ -109,6 +111,21 @@ public class GoalService {
     }
 
     @Transactional
+    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
+        Goal updatedGoal = goalRequestDto.updateGoal(findGoal, goalRequestDto.getGoal(), goalRequestDto.getPenalty());
+
+        goalRepository.save(updatedGoal);
+
+        return "목표 패널티 설정 성공";
+    }
+
+    @Transactional
     public List<Pair<String, String>> getGoalList(String token, Long groupId){
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
@@ -121,21 +138,6 @@ public class GoalService {
         findGoal.forEach(g -> goalList.add(new Pair<>(g.getUser().getName(), g.getGoal())));
 
         return goalList;
-    }
-
-    @Transactional
-    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId) {
-        User user = userRepository.findByToken(token)
-                .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
-
-        Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
-
-        findGoal.updateGoal(goalRequestDto.getGoal());
-        findGoal.updatePenalty(goalRequestDto.getPenalty());
-
-        return "목표 패널티 설정 성공";
     }
 
     @Transactional
@@ -156,5 +158,36 @@ public class GoalService {
         //goals.forEach(g -> goalRepository.delete(g));
 
         return "목표 삭제 성공";
+    }
+
+    @Transactional
+    public String setFeedback(String token, List<String> feedback, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("권한이 없습니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+        goal.updateDoFeedback();
+
+        feedback.forEach(f -> {
+            if (!f.equals("")) {
+                User u = userRepository.findByName(f).get();
+                Goal findGoal = goalRepository.findActiveRoutineByIds(u.getId(), group.getId());
+                findGoal.updateSuccessNum();
+            }
+        });
+        return "목표 패널티 설정 성공";
+    }
+
+    @Transactional
+    public Boolean getDoFeedback(String token, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("권한이 없습니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+        return goal.getDoFeedback();
     }
 }
