@@ -4,10 +4,7 @@ import com.ourjupiter.springboot.domain.posts.FileUse;
 import com.ourjupiter.springboot.service.Certification.CertificationService;
 import com.ourjupiter.springboot.service.goal.GoalService;
 import com.ourjupiter.springboot.service.posts.FileService;
-import com.ourjupiter.springboot.web.dto.CertificationCreateRequestDto;
-import com.ourjupiter.springboot.web.dto.FileDto;
-import com.ourjupiter.springboot.web.dto.PostsSaveRequestDto;
-import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
+import com.ourjupiter.springboot.web.dto.*;
 import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -71,8 +68,8 @@ public class CertificationController {
 
     @CrossOrigin("*")
     @GetMapping("/daily/{groupId}")
-    public List<Pair<String, Long>> getDailyCertification(@RequestHeader("x-access-token") String token,
-                                                            @PathVariable Long groupId) {
+    public List<CertificationResponseDto> getDailyCertification(@RequestHeader("x-access-token") String token,
+                                                                @PathVariable Long groupId) {
 
         return certificationService.getDailyCertification(token, groupId);
     }

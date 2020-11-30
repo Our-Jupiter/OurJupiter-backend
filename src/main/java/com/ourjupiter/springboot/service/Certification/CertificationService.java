@@ -11,6 +11,7 @@ import com.ourjupiter.springboot.domain.user.UserRepository;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
 import com.ourjupiter.springboot.web.dto.CertificationCreateRequestDto;
+import com.ourjupiter.springboot.web.dto.CertificationResponseDto;
 import com.ourjupiter.springboot.web.dto.PostsListResponseDto;
 import com.ourjupiter.springboot.web.dto.UnauthorizedException;
 import javafx.util.Pair;
@@ -22,9 +23,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -60,7 +63,7 @@ public class CertificationService {
     }
 
     @Transactional
-    public List<Pair<String, Long>> getDailyCertification(String token, Long groupId) {
+    public List<CertificationResponseDto> getDailyCertification(String token, Long groupId) {
 
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
@@ -68,20 +71,19 @@ public class CertificationService {
                 .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
 
         List<Object[]> findCertification = certificationRepository.findByDaily(groupId);
-        List<Pair<String, Long>> goalList = new ArrayList<>();
+
+        List<CertificationResponseDto> CertificationList = new ArrayList<>();
 
         for (Object[] element : findCertification) {
-            String date = element[2].toString();
-            if (date.equals(LocalDate.now().format(formatter))){
-                if (element[1] == null){
-                    goalList.add(new Pair<>(element[0].toString(),null));
-                }
-                else {
-                    goalList.add(new Pair<>(element[0].toString(),Long.parseLong(element[1].toString())));
-                }
+            if (element[1] == null ) {
+                CertificationList.add(new CertificationResponseDto(element[0].toString(),null,LocalDate.parse(element[2].toString(), DateTimeFormatter.ISO_DATE)));
+            }
+            else {
+                CertificationList.add(new CertificationResponseDto(element[0].toString(), Long.parseLong(element[1].toString()), LocalDate.parse(element[2].toString(), DateTimeFormatter.ISO_DATE)));
             }
         }
-        return goalList;
+
+        return CertificationList;
     }
 
     @Transactional
