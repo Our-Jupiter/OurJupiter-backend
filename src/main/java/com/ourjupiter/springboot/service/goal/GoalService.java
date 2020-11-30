@@ -1,6 +1,10 @@
 package com.ourjupiter.springboot.service.goal;
 
+import com.ourjupiter.springboot.domain.certificaion.Certification;
+import com.ourjupiter.springboot.domain.certificaion.CertificationPK;
+import com.ourjupiter.springboot.domain.certificaion.CertificationRepository;
 import com.ourjupiter.springboot.domain.goal.Goal;
+
 import com.ourjupiter.springboot.domain.goal.GoalRepository;
 import com.ourjupiter.springboot.domain.group.Group;
 import com.ourjupiter.springboot.domain.group.GroupRepository;
@@ -11,11 +15,16 @@ import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
 import com.ourjupiter.springboot.web.dto.GoalRequestDto;
 import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
 import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +36,11 @@ public class GoalService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
+    private final CertificationRepository certificationRepository;
 
     @Transactional
-    public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto){
+    public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto) {
+
         User user = userRepository.findByToken(token).get();
         Group group = groupRepository.findById(routineCreateRequestDto.getGroupId()).get();
 
@@ -38,35 +49,53 @@ public class GoalService {
         }
 
         LocalDate startDate = routineCreateRequestDto.getStartDate();
+        LocalDate todayDate = startDate;
         LocalDate endDate = startDate.plusDays(14);
 
         List<UserGroup> members = userGroupRepository.findByGroupId(group.getId());
-        members.forEach(m -> goalRepository.save(
-                Goal.builder()
-                        .start_date(startDate.plusDays(1))
-                        .end_date(endDate)
-                        .user(userRepository.findById(m.getUser().getId()).get())
-                        .group(group)
-                        .goal("")
-                        .penalty("")
-                        .success(false)
-                        .penalty_certificate(false)
-                        .penalty_approved_num(0)
-                        .is_expired(false)
-                        .build()
-        ));
+        for (UserGroup element : members) {
+            Goal g = goalRepository.save(
+                    Goal.builder()
+                            .start_date(startDate.plusDays(1))
+                            .end_date(endDate)
+                            .user(userRepository.findById(element.getUser().getId()).get())
+                            .group(group)
+                            .goal("")
+                            .penalty("")
+                            .success(false)
+                            .success_num(0)
+                            .do_feedback(false)
+                            .penalty_certificate(false)
+                            .penalty_approved_num(0)
+                            .is_expired(false)
+                            .build()
+            );
+
+            for (int i = 0; i < 14; i++) {
+                certificationRepository.save(
+                        Certification.builder()
+                                .today_date(todayDate.plusDays(1))
+                                .daily_check(false)
+                                .goal(g)
+                                .fileId(null)
+                                .build()
+                );
+                todayDate = todayDate.plusDays(1);
+            }
+            todayDate = startDate;
+        }
         return "루틴 생성 성공";
     }
 
     @Transactional
-    public LocalDate hasRoutine(Long groupId){
+    public LocalDate hasRoutine(Long groupId) {
         List<Goal> routines = goalRepository.findActiveRoutine(groupId);
         if (routines.size() == 0) return null;
         return routines.get(0).getId().getStartDate();
     }
 
     @Transactional
-    public Map<String, String> getGoalPenalty(String token, Long groupId){
+    public Map<String, String> getGoalPenalty(String token, Long groupId) {
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
         Group group = groupRepository.findById(groupId)
@@ -82,17 +111,83 @@ public class GoalService {
     }
 
     @Transactional
-    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId){
+    public String setGoalPenalty(String token, GoalRequestDto goalRequestDto, Long groupId) {
         User user = userRepository.findByToken(token)
                 .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
 
         Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
+        Goal updatedGoal = goalRequestDto.updateGoal(findGoal, goalRequestDto.getGoal(), goalRequestDto.getPenalty());
 
-        findGoal.updateGoal(goalRequestDto.getGoal());
-        findGoal.updatePenalty(goalRequestDto.getPenalty());
+        goalRepository.save(updatedGoal);
 
         return "목표 패널티 설정 성공";
+    }
+
+    @Transactional
+    public List<Pair<String, String>> getGoalList(String token, Long groupId){
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("없는 유저입니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        List<Goal> findGoal = goalRepository.findActiveRoutine(groupId);
+
+        List<Pair<String, String>> goalList = new ArrayList<>();
+        findGoal.forEach(g -> goalList.add(new Pair<>(g.getUser().getName(), g.getGoal())));
+
+        return goalList;
+    }
+
+    @Transactional
+    public String deleteGoal(Long groupId, String token) {
+        User user = userRepository.findByToken(token).get();
+        Group group = groupRepository.findById(groupId).get();
+
+        if (user.getId() != group.getOwnerId()) {
+            throw new UnauthorizedException("권한이 없습니다 .");
+        }
+
+        List<Goal> goals = goalRepository.findByGroupId(groupId);
+        int count = goals.size();
+        //goalRepository.delete(goalRepository.findByIdGroupId(groupId).get());
+        /*for (int i = 0; i < count; i++) {
+            goalRepository.deleteInBatch(goals);
+        }*/
+        //goals.forEach(g -> goalRepository.delete(g));
+
+        return "목표 삭제 성공";
+    }
+
+    @Transactional
+    public String setFeedback(String token, List<String> feedback, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("권한이 없습니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+        goal.updateDoFeedback();
+
+        feedback.forEach(f -> {
+            if (!f.equals("")) {
+                User u = userRepository.findByName(f).get();
+                Goal findGoal = goalRepository.findActiveRoutineByIds(u.getId(), group.getId());
+                findGoal.updateSuccessNum();
+            }
+        });
+        return "목표 패널티 설정 성공";
+    }
+
+    @Transactional
+    public Boolean getDoFeedback(String token, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("권한이 없습니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+        return goal.getDoFeedback();
     }
 }

@@ -30,4 +30,5 @@ public class GoalPK implements Serializable {
         this.userId = userId;
         this.groupId = groupId;
     }
+
 }

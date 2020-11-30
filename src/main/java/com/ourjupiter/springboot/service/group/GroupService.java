@@ -91,7 +91,6 @@ public class GroupService {
         if(!userId.equals(group.getOwnerId())) {
             throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
         }
-
         groupRepository.delete(group);
         return "그룹 삭제 성공";
     }

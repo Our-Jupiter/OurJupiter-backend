@@ -3,10 +3,13 @@ package com.ourjupiter.springboot.web;
 import com.ourjupiter.springboot.service.goal.GoalService;
 import com.ourjupiter.springboot.web.dto.GoalRequestDto;
 import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -38,11 +41,36 @@ public class GoalController {
     }
 
     @CrossOrigin("*")
-    @PostMapping("/goal/{groupId}")
+    @PutMapping("/goal/{groupId}")
     public String setGoalPenalty(@RequestHeader("x-access-token") String token,
                                  @RequestBody GoalRequestDto goalRequestDto,
                                  @PathVariable Long groupId) {
 
         return goalService.setGoalPenalty(token, goalRequestDto, groupId);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/goalList/{groupId}")
+    public List<Pair<String, String>> getGoalList(@RequestHeader("x-access-token") String token,
+                                                @PathVariable Long groupId) {
+
+        return goalService.getGoalList(token, groupId);
+    }
+
+    @CrossOrigin("*")
+    @PutMapping("/feedback/{groupId}")
+    public String setFeedback(@RequestHeader("x-access-token") String token,
+                                 @RequestBody List<String> feedback,
+                                 @PathVariable Long groupId) {
+
+        return goalService.setFeedback(token, feedback, groupId);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/feedback/{groupId}")
+    public Boolean getDoFeedback(@RequestHeader("x-access-token") String token,
+                                @PathVariable Long groupId) {
+
+        return goalService.getDoFeedback(token, groupId);
     }
 }
