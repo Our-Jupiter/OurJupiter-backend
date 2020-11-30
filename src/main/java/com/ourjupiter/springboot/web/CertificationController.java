@@ -68,8 +68,9 @@ public class CertificationController {
 
     @CrossOrigin("*")
     @GetMapping("/daily/{groupId}")
-    public List<CertificationResponseDto> getDailyCertification(@RequestHeader("x-access-token") String token,
-                                                                @PathVariable Long groupId) {
+    public List<Pair<String, List<CertificationResponseDto>>> getDailyCertification(
+            @RequestHeader("x-access-token") String token,
+            @PathVariable Long groupId) {
 
         return certificationService.getDailyCertification(token, groupId);
     }
