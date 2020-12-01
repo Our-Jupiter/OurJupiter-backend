@@ -81,4 +81,12 @@ public class GoalController {
 
         return goalService.getRecord(token, groupId);
     }
+
+    @CrossOrigin("*")
+    @PostMapping("/routine/{groupId}")
+    public Boolean endRoutine(@RequestHeader("x-access-token") String token,
+                                 @PathVariable Long groupId) {
+
+        return goalService.endRoutine(token, groupId);
+    }
 }

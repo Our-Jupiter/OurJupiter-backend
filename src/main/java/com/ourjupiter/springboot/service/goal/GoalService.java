@@ -222,6 +222,22 @@ public class GoalService {
         }
 
         return result;
+    }
 
+    @Transactional
+    public Boolean endRoutine(String token, Long id){
+
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + id));
+
+        Long userId = userRepository.findByToken(token).get().getId();
+        if(!userId.equals(group.getOwnerId())) {
+            throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
+        }
+
+        List<Goal> goals = goalRepository.findActiveRoutine(id);
+        goals.forEach(g -> g.updateIsExpired());
+
+        return true;
     }
 }

@@ -100,4 +100,8 @@ public class Goal {
     public void updateApprovedNum() {
         this.penaltyApproved_num += 1;
     }
+
+    public void updateIsExpired() {
+        this.isExpired = true;
+    }
 }
