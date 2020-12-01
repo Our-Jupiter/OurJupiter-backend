@@ -12,16 +12,16 @@ import com.ourjupiter.springboot.domain.user.User;
 import com.ourjupiter.springboot.domain.user.UserRepository;
 import com.ourjupiter.springboot.domain.user_group.UserGroup;
 import com.ourjupiter.springboot.domain.user_group.UserGroupRepository;
-import com.ourjupiter.springboot.web.dto.GoalRequestDto;
-import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
-import com.ourjupiter.springboot.web.dto.UnauthorizedException;
+import com.ourjupiter.springboot.web.dto.*;
 import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.rmi.registry.LocateRegistry;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ public class GoalService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final CertificationRepository certificationRepository;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Transactional
     public String createRoutine(String token, RoutineCreateRequestDto routineCreateRequestDto) {
@@ -189,5 +190,38 @@ public class GoalService {
 
         Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
         return goal.getDoFeedback();
+    }
+
+    @Transactional
+    public List<Pair<String, List<GoalRecordResponseDto>>> getRecord(String token, Long groupId) {
+        User user = userRepository.findByToken(token)
+                .orElseThrow(() -> new UnauthorizedException("권한이 없습니다 ."));
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
+
+        List<Goal> findRecord = goalRepository.findGoalRecords(groupId);
+        List<Pair<String, List<GoalRecordResponseDto>>> result = new ArrayList<>();
+        List<GoalRecordResponseDto> RecordList = new ArrayList<>();
+
+        String startDate= "";
+        int index = 0;
+        for (Goal element : findRecord) {
+            index++;
+            if (!element.getId().getStartDate().format(formatter).equals(startDate)) {
+                if (!startDate.equals("")) {
+                    result.add(new Pair<>(startDate, RecordList));
+                    RecordList = new ArrayList<>();
+                }
+                startDate = element.getId().getStartDate().format(formatter);
+            }
+            RecordList.add(new GoalRecordResponseDto(element.getId().getStartDate(), element.getUser().getName(), element.getPenalty(), element.getSuccess()));
+        }
+
+        if (findRecord.size() != 0) {
+            result.add(new Pair<>(findRecord.get(index - 1).getId().getStartDate().format(formatter), RecordList));
+        }
+
+        return result;
+
     }
 }

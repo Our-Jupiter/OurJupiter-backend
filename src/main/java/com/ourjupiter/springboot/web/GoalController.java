@@ -1,6 +1,7 @@
 package com.ourjupiter.springboot.web;
 
 import com.ourjupiter.springboot.service.goal.GoalService;
+import com.ourjupiter.springboot.web.dto.GoalRecordResponseDto;
 import com.ourjupiter.springboot.web.dto.GoalRequestDto;
 import com.ourjupiter.springboot.web.dto.RoutineCreateRequestDto;
 import javafx.util.Pair;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -72,5 +72,13 @@ public class GoalController {
                                 @PathVariable Long groupId) {
 
         return goalService.getDoFeedback(token, groupId);
+    }
+
+    @CrossOrigin("*")
+    @GetMapping("/record/{groupId}")
+    public List<Pair<String, List<GoalRecordResponseDto>>> getRecord(@RequestHeader("x-access-token") String token,
+                                                 @PathVariable Long groupId) {
+
+        return goalService.getRecord(token, groupId);
     }
 }
