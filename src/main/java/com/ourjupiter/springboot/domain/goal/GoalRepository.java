@@ -37,4 +37,8 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     @Modifying
     @Query("UPDATE Goal g SET g.successNum=g.successNum + 1 WHERE g.id.userId = :#{#userId} and g.id.groupId = :#{#groupId} and g.isExpired = 0")
     Integer updateSuccessNum(Long userId, Long groupId);
+
+    @Modifying
+    @Query("UPDATE Goal g SET g.success=:#{#success} WHERE g.id.userId = :#{#userId} and g.id.groupId = :#{#groupId} and g.isExpired = 0")
+    Integer updateSuccess(Boolean success, Long userId, Long groupId);
 }

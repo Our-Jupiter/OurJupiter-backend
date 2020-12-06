@@ -177,7 +177,7 @@ public class GoalService {
                 goalRepository.updateSuccessNum(u.getId(), groupId);
             }
         });
-        return "목표 패널티 설정 성공";
+        return "피드백 반영 성공";
     }
 
     @Transactional
@@ -230,12 +230,19 @@ public class GoalService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + id));
 
+        List<UserGroup> groupMembers = userGroupRepository.findByGroupId(id);
+
         Long userId = userRepository.findByToken(token).get().getId();
         if(!userId.equals(group.getOwnerId())) {
             throw new UnauthorizedException("관리자에게만 권한이 있습니다.");
         }
 
         List<Goal> goals = goalRepository.findActiveRoutine(id);
+        goals.forEach(g -> {
+            if (g.getSuccessNum() >= groupMembers.size()/2) {
+                goalRepository.updateSuccess(true, g.getUser().getId(), g.getGroup().getId());
+            }
+        });
         goals.forEach(g -> goalRepository.updateIsExpired(true, g.getUser().getId(), g.getGroup().getId()));
         //goals.forEach(g -> g.updateIsExpired());
         return true;
