@@ -118,10 +118,9 @@ public class GoalService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
 
-        Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
-        Goal updatedGoal = goalRequestDto.updateGoal(findGoal, goalRequestDto.getGoal(), goalRequestDto.getPenalty());
+        //Goal findGoal = goalRepository.findActiveRoutineByIds(user.getId(), group.getId());
 
-        goalRepository.save(updatedGoal);
+        goalRepository.updateGoalPenalty(goalRequestDto.getGoal(), goalRequestDto.getPenalty(), user.getId(), group.getId());
 
         return "목표 패널티 설정 성공";
     }
@@ -168,14 +167,14 @@ public class GoalService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
 
-        Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
-        goal.updateDoFeedback();
+        //Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+        goalRepository.updateDoFeedback(true, user.getId(), groupId);
 
         feedback.forEach(f -> {
             if (!f.equals("")) {
                 User u = userRepository.findByName(f).get();
-                Goal findGoal = goalRepository.findActiveRoutineByIds(u.getId(), group.getId());
-                findGoal.updateSuccessNum();
+                //Goal findGoal = goalRepository.findActiveRoutineByIds(u.getId(), group.getId());
+                goalRepository.updateSuccessNum(u.getId(), groupId);
             }
         });
         return "목표 패널티 설정 성공";
@@ -189,6 +188,7 @@ public class GoalService {
                 .orElseThrow(() -> new UnauthorizedException("없는 그룹입니다 ."));
 
         Goal goal = goalRepository.findActiveRoutineByIds(user.getId(), groupId);
+
         return goal.getDoFeedback();
     }
 
@@ -236,8 +236,8 @@ public class GoalService {
         }
 
         List<Goal> goals = goalRepository.findActiveRoutine(id);
-        goals.forEach(g -> g.updateIsExpired());
-
+        goals.forEach(g -> goalRepository.updateIsExpired(true, g.getUser().getId(), g.getGroup().getId()));
+        //goals.forEach(g -> g.updateIsExpired());
         return true;
     }
 }

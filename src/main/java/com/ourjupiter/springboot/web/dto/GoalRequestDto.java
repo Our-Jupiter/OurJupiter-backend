@@ -16,10 +16,4 @@ public class GoalRequestDto {
         this.goal = goal;
         this.penalty = penalty;
     }
-
-    public Goal updateGoal(Goal findGoal, String goal, String penalty) {
-        findGoal.setGoal(goal);
-        findGoal.setPenalty(penalty);
-        return findGoal;
-    }
 }
